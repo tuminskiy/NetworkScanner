@@ -7,6 +7,6 @@
 namespace nmap
 {
 
-std::deque<ScanReport> parse(const std::string& data);
+NmapResult parse(const std::string& data);
 
 } // namespace nmap
