@@ -1,7 +1,5 @@
 #pragma once
 
-#include "nmap/detail/definitions_impl.hpp"
-
 #include <string>
 #include <deque>
 #include <ctime>
