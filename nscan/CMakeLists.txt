@@ -17,11 +17,7 @@ set_target_properties(${EXEC_NAME} PROPERTIES
 set(SCANNER_SRC include/scanner/scanner.hpp src/scanner/scanner.cpp)
 
 set(NMAP_SRC
-  include/nmap/definitions.hpp
-  include/nmap/convert.hpp src/nmap/convert.cpp
   include/nmap/parser.hpp src/nmap/parser.cpp
-
-  include/nmap/detail/definitions_impl.hpp
   include/nmap/detail/parser_impl.hpp src/nmap/detail/parser_impl.cpp
 )
 
@@ -38,7 +34,10 @@ target_include_directories(${EXEC_NAME}
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${Boost_INCLUDE_DIR}
+    ${CMAKE_SOURCE_DIR}/lib/nmap/include
 )
+
+message(${CMAKE_SOURCE_DIR})
 
 target_sources(${EXEC_NAME} PRIVATE ${SRC})
 
@@ -46,4 +45,5 @@ target_link_libraries(${EXEC_NAME}
   PRIVATE
     Qt5::Core
     ${Boost_LIBRARIES}
+    nmap_lib
 )

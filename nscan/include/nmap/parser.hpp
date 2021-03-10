@@ -1,6 +1,6 @@
 #pragma once
 
-#include "nmap/definitions.hpp"
+#include "definitions.hpp"
 
 #include <string>
 

@@ -6,10 +6,10 @@
 #include <iostream>
 #include <iomanip>
 
+#include "definitions.hpp"
+#include "convert.hpp"
 #include "scanner/scanner.hpp"
-#include "nmap/definitions.hpp"
 #include "nmap/parser.hpp"
-#include "nmap/convert.hpp"
 
 
 bool program_exist(const QString& name, const QStringList& args, int wait_msecs = 30000);
