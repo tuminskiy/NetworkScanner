@@ -21,22 +21,15 @@ std::ostream& operator<< (std::ostream& os, const nmap::NmapResult& value)
      << "Nmap end time: " << std::put_time(value.end_time, "%d.%m.%Y %H:%M:%S") << "\n\n";
   
   for (const auto& host : value.hosts) {
-    os << "Host start time: " << std::put_time(host.start_time, "%d.%m.%Y %H:%M:%S") << "\n"
-       << "Host end time: " << std::put_time(host.end_time, "%d.%m.%Y %H:%M:%S") << "\n"
-       << "Host status state: " << nmap::to_string(host.status.state) << "\n"
+    os << "Host status state: " << nmap::to_string(host.status.state) << "\n"
        << "Host status reason: " << host.status.reason << "\n"
-       << "Host status reason_ttl: " << host.status.reason_ttl << "\n\n";
-    
-    for (const auto& address : host.addresses) {
-      os << "Address type: " << nmap::to_string(address.addrtype) << "\n"
-         << "Address: " << address.addr << "\n"
-         << "Address vendor: " << address.vendor << "\n\n";
-    }
+       << "Host address: " << host.address << "\n"
+       << "Host mac: " << host.mac << "\n"
+       << "Host vendor: " << host.vendor << "\n\n";
 
     for (const auto& port : host.ports) {
       os << "Port state state: " << nmap::to_string(port.status.state) << "\n"
          << "Port state reason: " << port.status.reason << "\n"
-         << "Port state reason_ttl: " << port.status.reason_ttl << "\n"
          << "Port portid: " << port.portid << "\n"
          << "Port protocol: " << nmap::to_string(port.protocol) << "\n\n";
     }

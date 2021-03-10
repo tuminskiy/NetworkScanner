@@ -8,25 +8,12 @@
 namespace nmap
 {
 
-struct Address
-{
-  enum class AddrType { None = 0, IPv4, IPv6, Mac };
-
-  AddrType addrtype;
-  std::string addr;
-  std::string vendor;
-};
-
-using Addresses = std::deque<Address>;
-
-
 struct Status
 {
   enum class State { None = 0, Up, Down };
 
   State state;
   std::string reason;
-  uint32_t reason_ttl;
 };
 
 struct Port
@@ -51,10 +38,10 @@ using Ports = std::deque<Port>;
 
 struct Host
 {
-  std::tm* start_time;
-  std::tm* end_time;
   Status status;
-  Addresses addresses;
+  std::string mac;
+  std::string address;
+  std::string vendor;
   Ports ports;
 };
 
@@ -68,13 +55,6 @@ struct NmapResult
   Hosts hosts;
 };
 
-
-static const std::unordered_map<Address::AddrType, std::string> addrtype_str = {
-  { Address::AddrType::None, "None" },
-  { Address::AddrType::IPv4, "IPv4" },
-  { Address::AddrType::IPv6, "IPv6" },
-  { Address::AddrType::Mac, "Mac" }
-};
 
 static const std::unordered_map<Port::Protocol, std::string> protocol_str = {
   { Port::Protocol::None, "None" },
