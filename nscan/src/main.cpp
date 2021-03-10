@@ -34,9 +34,9 @@ std::ostream& operator<< (std::ostream& os, const nmap::NmapResult& value)
     }
 
     for (const auto& port : host.ports) {
-      os << "Port state state: " << nmap::to_string(port.state.state) << "\n"
-         << "Port state reason: " << port.state.reason << "\n"
-         << "Port state reason_ttl: " << port.state.reason_ttl << "\n"
+      os << "Port state state: " << nmap::to_string(port.status.state) << "\n"
+         << "Port state reason: " << port.status.reason << "\n"
+         << "Port state reason_ttl: " << port.status.reason_ttl << "\n"
          << "Port portid: " << port.portid << "\n"
          << "Port protocol: " << nmap::to_string(port.protocol) << "\n\n";
     }

@@ -13,7 +13,7 @@ Host parse_host(const boost::property_tree::ptree& xml)
   host.start_time = std::localtime(&start_time);
   host.end_time = std::localtime(&end_time);
 
-  host.status.state = nmap::hoststatus_from_str(xml.get<std::string>("status.<xmlattr>.state"));
+  host.status.state = nmap::state_from_str(xml.get<std::string>("status.<xmlattr>.state"));
   host.status.reason = xml.get<std::string>("status.<xmlattr>.reason");
   host.status.reason_ttl = xml.get<uint32_t>("status.<xmlattr>.reason_ttl");
 
@@ -58,9 +58,9 @@ Port parse_port(const boost::property_tree::ptree& xml)
   port.protocol = nmap::protocol_from_str(xml.get<std::string>("<xmlattr>.protocol"));
   port.portid = xml.get<uint16_t>("<xmlattr>.portid");
   
-  port.state.state = nmap::portstate_from_str(xml.get<std::string>("state.<xmlattr>.state"));
-  port.state.reason = xml.get<std::string>("state.<xmlattr>.reason");
-  port.state.reason_ttl = xml.get<uint32_t>("state.<xmlattr>.reason_ttl");
+  port.status.state = nmap::state_from_str(xml.get<std::string>("state.<xmlattr>.state"));
+  port.status.reason = xml.get<std::string>("state.<xmlattr>.reason");
+  port.status.reason_ttl = xml.get<uint32_t>("state.<xmlattr>.reason_ttl");
 
   port.service.name = xml.get<std::string>("service.<xmlattr>.name");
   port.service.method = xml.get<std::string>("service.<xmlattr>.method");
