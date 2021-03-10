@@ -9,18 +9,15 @@
 namespace nmap::detail
 {
 
-template <class T>
-auto make_string_compare(const std::string& lhs)
-{
-  return [&](const std::pair<T, std::string>& rhs) {
-    return boost::iequals(lhs, rhs.second);
-  };
-}
 
-template <class T, class Predicate>
-T find_type(const std::unordered_map<T, std::string>& map, Predicate p)
+template <class T>
+T find_type(const std::unordered_map<T, std::string>& map, const std::string& lhs)
 {
-  const auto it = std::find_if(map.begin(), map.end(), p);
+  const auto it = std::find_if(map.begin(), map.end(),
+    [&](const std::pair<T, std::string>& rhs) {
+      return boost::iequals(lhs, rhs.second);
+    }
+  );
   return it != map.end() ? it->first : T::None;
 }
 

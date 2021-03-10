@@ -17,7 +17,8 @@ set_target_properties(${EXEC_NAME} PROPERTIES
 set(SCANNER_SRC include/scanner/scanner.hpp src/scanner/scanner.cpp)
 
 set(NMAP_SRC
-  include/nmap/definitions.hpp src/nmap/definitions.cpp
+  include/nmap/definitions.hpp
+  include/nmap/convert.hpp src/nmap/convert.cpp
   include/nmap/parser.hpp src/nmap/parser.cpp
 
   include/nmap/detail/definitions_impl.hpp
