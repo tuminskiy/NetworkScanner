@@ -1,5 +1,7 @@
 #pragma once
 
+#include "nmap/detail/definitions_impl.hpp"
+
 #include <string>
 #include <deque>
 #include <ctime>
@@ -76,24 +78,6 @@ struct NmapResult
   std::tm* end_time;
   Hosts hosts;
 };
-
-
-Address::AddrType addrtype(const std::string& str);
-
-Port::State::StateType port_state(const std::string& str);
-
-Port::Protocol protocol(const std::string& str);
-
-Host::Status::StateType host_state(const std::string& str);
-
-
-const std::string& addrtype(Address::AddrType type);
-
-const std::string& port_state(Port::State::StateType state);
-
-const std::string& protocol(Port::Protocol protocol);
-
-const std::string& host_state(Host::Status::StateType type);
 
 
 static const std::unordered_map<Address::AddrType, std::string> addrtype_str = {

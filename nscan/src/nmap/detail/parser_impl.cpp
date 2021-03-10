@@ -1,4 +1,5 @@
 #include "nmap/detail/parser_impl.hpp"
+#include "nmap/convert.hpp"
 
 namespace nmap::detail {
 
@@ -12,7 +13,7 @@ Host parse_host(const boost::property_tree::ptree& xml)
   host.start_time = std::localtime(&start_time);
   host.end_time = std::localtime(&end_time);
 
-  host.status.state = host_state(xml.get<std::string>("status.<xmlattr>.state"));
+  host.status.state = from_string<Host::Status::StateType>(xml.get<std::string>("status.<xmlattr>.state"));
   host.status.reason = xml.get<std::string>("status.<xmlattr>.reason");
   host.status.reason_ttl = xml.get<uint32_t>("status.<xmlattr>.reason_ttl");
 
@@ -38,7 +39,7 @@ Address parse_address(const boost::property_tree::ptree& xml)
 {
   Address address;
 
-  address.addrtype = addrtype(xml.get<std::string>("<xmlattr>.addrtype"));
+  address.addrtype = from_string<Address::AddrType>(xml.get<std::string>("<xmlattr>.addrtype"));
   address.addr = xml.get<std::string>("<xmlattr>.addr");
 
   const auto vendor = xml.get_optional<std::string>("<xmlattr>.vendor");
@@ -54,10 +55,10 @@ Port parse_port(const boost::property_tree::ptree& xml)
 {
   Port port;
 
-  port.protocol = protocol(xml.get<std::string>("<xmlattr>.protocol"));
+  port.protocol = from_string<Port::Protocol>(xml.get<std::string>("<xmlattr>.protocol"));
   port.portid = xml.get<uint16_t>("<xmlattr>.portid");
   
-  port.state.state = port_state(xml.get<std::string>("state.<xmlattr>.state"));
+  port.state.state = from_string<Port::State::StateType>(xml.get<std::string>("state.<xmlattr>.state"));
   port.state.reason = xml.get<std::string>("state.<xmlattr>.reason");
   port.state.reason_ttl = xml.get<uint32_t>("state.<xmlattr>.reason_ttl");
 

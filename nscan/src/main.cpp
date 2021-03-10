@@ -9,6 +9,7 @@
 #include "scanner/scanner.hpp"
 #include "nmap/definitions.hpp"
 #include "nmap/parser.hpp"
+#include "nmap/convert.hpp"
 
 
 bool program_exist(const QString& name, const QStringList& args, int wait_msecs = 30000);
@@ -22,22 +23,22 @@ std::ostream& operator<< (std::ostream& os, const nmap::NmapResult& value)
   for (const auto& host : value.hosts) {
     os << "Host start time: " << std::put_time(host.start_time, "%d.%m.%Y %H:%M:%S") << "\n"
        << "Host end time: " << std::put_time(host.end_time, "%d.%m.%Y %H:%M:%S") << "\n"
-       << "Host status state: " << nmap::host_state(host.status.state) << "\n"
+       << "Host status state: " << nmap::to_string(host.status.state) << "\n"
        << "Host status reason: " << host.status.reason << "\n"
        << "Host status reason_ttl: " << host.status.reason_ttl << "\n\n";
     
     for (const auto& address : host.addresses) {
-      os << "Address type: " << nmap::addrtype(address.addrtype) << "\n"
+      os << "Address type: " << nmap::to_string(address.addrtype) << "\n"
          << "Address: " << address.addr << "\n"
          << "Address vendor: " << address.vendor << "\n\n";
     }
 
     for (const auto& port : host.ports) {
-      os << "Port state state: " << nmap::port_state(port.state.state) << "\n"
+      os << "Port state state: " << nmap::to_string(port.state.state) << "\n"
          << "Port state reason: " << port.state.reason << "\n"
          << "Port state reason_ttl: " << port.state.reason_ttl << "\n"
          << "Port portid: " << port.portid << "\n"
-         << "Port protocol: " << nmap::protocol(port.protocol) << "\n\n";
+         << "Port protocol: " << nmap::to_string(port.protocol) << "\n\n";
     }
   }
 
