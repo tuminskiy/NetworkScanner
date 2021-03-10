@@ -1,8 +1,8 @@
 #pragma once
 
-#include <boost/property_tree/ptree.hpp>
+#include "definitions.hpp"
 
-#include "nmap/definitions.hpp"
+#include <boost/property_tree/ptree.hpp>
 
 namespace nmap::detail
 {
