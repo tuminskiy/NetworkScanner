@@ -20,17 +20,17 @@ set(NMAP_SRC
   include/nmap/scanner.hpp src/nmap/scanner.cpp
 )
 
-# set(STORAGE_SRC
-#   include/storage/database.hpp src/storage/database.cpp
-# )
+set(STORAGE_SRC
+  # include/storage/database.hpp src/storage/database.cpp
+)
 
 set(SRC
   src/main.cpp
   ${NMAP_SRC}
-  # ${STORAGE_SRC}
+  ${STORAGE_SRC}
 )
 
-find_package(Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt5 COMPONENTS Core Sql REQUIRED)
 find_package(Boost REQUIRED)
 
 target_include_directories(${EXEC_NAME}
@@ -38,6 +38,7 @@ target_include_directories(${EXEC_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${Boost_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/lib/nmap/include
+    ${CMAKE_SOURCE_DIR}/lib/storage/include
 )
 
 message(${CMAKE_SOURCE_DIR})
@@ -46,7 +47,7 @@ target_sources(${EXEC_NAME} PRIVATE ${SRC})
 
 target_link_libraries(${EXEC_NAME}
   PRIVATE
-    Qt5::Core
+    Qt5::Core Qt5::Sql
     ${Boost_LIBRARIES}
-    nmap_lib
+    nmapdef
 )
