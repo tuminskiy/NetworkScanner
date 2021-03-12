@@ -14,17 +14,20 @@ set_target_properties(${EXEC_NAME} PROPERTIES
   AUTOMOC ON
 )
 
-set(SCANNER_SRC include/scanner/scanner.hpp src/scanner/scanner.cpp)
-
 set(NMAP_SRC
   include/nmap/parser.hpp src/nmap/parser.cpp
   include/nmap/detail/parser_impl.hpp src/nmap/detail/parser_impl.cpp
+  include/nmap/scanner.hpp src/nmap/scanner.cpp
 )
+
+# set(STORAGE_SRC
+#   include/storage/database.hpp src/storage/database.cpp
+# )
 
 set(SRC
   src/main.cpp
   ${NMAP_SRC}
-  ${SCANNER_SRC}
+  # ${STORAGE_SRC}
 )
 
 find_package(Qt5 COMPONENTS Core REQUIRED)

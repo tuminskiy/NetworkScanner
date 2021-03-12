@@ -8,7 +8,7 @@
 
 #include "definitions.hpp"
 #include "convert.hpp"
-#include "scanner/scanner.hpp"
+#include "nmap/scanner.hpp"
 #include "nmap/parser.hpp"
 
 

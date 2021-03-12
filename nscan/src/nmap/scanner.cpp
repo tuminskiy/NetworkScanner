@@ -1,4 +1,4 @@
-#include "scanner/scanner.hpp"
+#include "nmap/scanner.hpp"
 
 #include <QDebug>
 
@@ -23,9 +23,13 @@ void Scanner::scan(const QStringList& args)
 void Scanner::nmap_finish(int code, QProcess::ExitStatus status)
 {
   Q_UNUSED(code)
-  Q_UNUSED(status)
+  
+  if (status == QProcess::ExitStatus::CrashExit) {
+    qDebug() << "nmap crashed";
+    return;
+  }
 
-  qDebug() << "nmap finished\n";
+  qDebug() << "nmap finished";
   
   const QByteArray bytes = nmap_.readAllStandardOutput();
 
