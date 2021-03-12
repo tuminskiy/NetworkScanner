@@ -43,9 +43,12 @@ Port parse_port(const boost::property_tree::ptree& xml)
   port.status.state = nmap::state_from_str(xml.get<std::string>("state.<xmlattr>.state"));
   port.status.reason = xml.get<std::string>("state.<xmlattr>.reason");
 
-  port.service.name = xml.get<std::string>("service.<xmlattr>.name");
-  port.service.method = xml.get<std::string>("service.<xmlattr>.method");
-  port.service.conf = xml.get<uint16_t>("service.<xmlattr>.conf");
+  Service service;
+  service.name = xml.get<std::string>("service.<xmlattr>.name");
+  service.method = xml.get<std::string>("service.<xmlattr>.method");
+  service.conf = xml.get<uint16_t>("service.<xmlattr>.conf");
+
+  port.service = service;
 
   return port;
 }
