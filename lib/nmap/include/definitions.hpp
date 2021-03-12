@@ -16,15 +16,15 @@ struct Status
   std::string reason;
 };
 
+struct Service
+{
+  std::string name;
+  std::string method;
+  uint16_t conf;
+};
+
 struct Port
 {
-  struct Service
-  {
-    std::string name;
-    std::string method;
-    uint16_t conf;
-  };
-
   enum Protocol { None = 0, Tcp, Udp };
 
   Protocol protocol;

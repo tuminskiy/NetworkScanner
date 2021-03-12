@@ -1,5 +1,6 @@
 #include "nmap/detail/parser_impl.hpp"
 #include "convert.hpp"
+#include "definitions.hpp"
 
 namespace nmap::detail {
 
@@ -14,8 +15,8 @@ Host parse_host(const boost::property_tree::ptree& xml)
     if (name != "address")
       continue;
 
-    const auto addrtype = xml.get<std::string>("<xmlattr>.addrtype");
-    const auto addr = xml.get<std::string>("<xmlattr>.addr");
+    const auto addrtype = tree.get<std::string>("<xmlattr>.addrtype");
+    const auto addr = tree.get<std::string>("<xmlattr>.addr");
 
     if (addrtype == "mac") host.mac = addr;
     else host.address = addr;
@@ -42,9 +43,12 @@ Port parse_port(const boost::property_tree::ptree& xml)
   port.status.state = nmap::state_from_str(xml.get<std::string>("state.<xmlattr>.state"));
   port.status.reason = xml.get<std::string>("state.<xmlattr>.reason");
 
-  port.service.name = xml.get<std::string>("service.<xmlattr>.name");
-  port.service.method = xml.get<std::string>("service.<xmlattr>.method");
-  port.service.conf = xml.get<uint16_t>("service.<xmlattr>.conf");
+  Service service;
+  service.name = xml.get<std::string>("service.<xmlattr>.name");
+  service.method = xml.get<std::string>("service.<xmlattr>.method");
+  service.conf = xml.get<uint16_t>("service.<xmlattr>.conf");
+
+  port.service = service;
 
   return port;
 }

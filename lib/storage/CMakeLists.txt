@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-set(LIB_NAME nmapdef)
+set(LIB_NAME dbdef)
 add_library(${LIB_NAME} STATIC)
 
 set_target_properties(${LIB_NAME} PROPERTIES
@@ -11,19 +11,20 @@ set_target_properties(${LIB_NAME} PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib/release/${LIB_NAME}
 )
 
-set(SRC
-  include/definitions.hpp
-  include/convert.hpp src/convert.cpp
-)
+set(SRC include/basedb.hpp src/basedb.cpp)
 
-find_package(Boost REQUIRED)
+find_package(Qt5 COMPONENTS Sql REQUIRED)
 
 target_include_directories(${LIB_NAME}
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${Boost_INCLUDE_DIR}
+    ${CMAKE_SOURCE_DIR}/lib/nmap/include
 )
 
 target_sources(${LIB_NAME} PRIVATE ${SRC})
 
-target_link_libraries(${LIB_NAME} PRIVATE ${Boost_LIBRARIES})
+target_link_libraries(${LIB_NAME}
+  PRIVATE
+    Qt5::Sql
+    nmapdef
+)

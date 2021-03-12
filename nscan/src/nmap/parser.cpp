@@ -1,5 +1,6 @@
 #include "nmap/parser.hpp"
 #include "nmap/detail/parser_impl.hpp"
+#include "definitions.hpp"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
