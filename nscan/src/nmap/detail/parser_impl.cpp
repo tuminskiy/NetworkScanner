@@ -15,8 +15,8 @@ Host parse_host(const boost::property_tree::ptree& xml)
     if (name != "address")
       continue;
 
-    const auto addrtype = xml.get<std::string>("<xmlattr>.addrtype");
-    const auto addr = xml.get<std::string>("<xmlattr>.addr");
+    const auto addrtype = tree.get<std::string>("<xmlattr>.addrtype");
+    const auto addr = tree.get<std::string>("<xmlattr>.addr");
 
     if (addrtype == "mac") host.mac = addr;
     else host.address = addr;
