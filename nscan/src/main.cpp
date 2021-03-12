@@ -4,40 +4,15 @@
 #include <QTimer>
 
 #include <iostream>
-#include <iomanip>
 
 #include "definitions.hpp"
 #include "convert.hpp"
 #include "nmap/scanner.hpp"
 #include "nmap/parser.hpp"
+#include "storage/database.hpp"
 
 
 bool program_exist(const QString& name, const QStringList& args, int wait_msecs = 30000);
-
-
-std::ostream& operator<< (std::ostream& os, const nmap::NmapResult& value)
-{
-  os << "Nmap start time: " << std::put_time(value.start_time, "%d.%m.%Y %H:%M:%S") << "\n"
-     << "Nmap end time: " << std::put_time(value.end_time, "%d.%m.%Y %H:%M:%S") << "\n\n";
-  
-  for (const auto& host : value.hosts) {
-    os << "Host status state: " << nmap::to_string(host.status.state) << "\n"
-       << "Host status reason: " << host.status.reason << "\n"
-       << "Host address: " << host.address << "\n"
-       << "Host mac: " << host.mac << "\n"
-       << "Host vendor: " << host.vendor << "\n\n";
-
-    for (const auto& port : host.ports) {
-      os << "Port state state: " << nmap::to_string(port.status.state) << "\n"
-         << "Port state reason: " << port.status.reason << "\n"
-         << "Port portid: " << port.portid << "\n"
-         << "Port protocol: " << nmap::to_string(port.protocol) << "\n\n";
-    }
-  }
-
-  
-  return os;
-}
 
 int main(int argc, char* argv[])
 {
@@ -47,12 +22,23 @@ int main(int argc, char* argv[])
     std::cerr << "nmap not exist\n";
     return 0;
   }
+  
+  storage::DbConfig config;
+  config.type = "QPSQL7";
+  config.host = "127.0.0.1";
+  config.port = 5432;
+  config.username = "worker";
+  config.password = "123";
+  config.db_name = "network_scan";
+
+  storage::Database db(config);
+  db.open();
 
   nscan::Scanner scanner;
 
   QObject::connect(&scanner, &nscan::Scanner::finished,
-    [](const std::string& data) {
-      std::cout << nmap::parse(data);
+    [&](const std::string& data) {
+       db.save_result(nmap::parse(data));
     }
   );
 

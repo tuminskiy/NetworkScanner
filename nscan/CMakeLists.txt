@@ -21,7 +21,7 @@ set(NMAP_SRC
 )
 
 set(STORAGE_SRC
-  # include/storage/database.hpp src/storage/database.cpp
+  include/storage/database.hpp src/storage/database.cpp
 )
 
 set(SRC
@@ -49,5 +49,5 @@ target_link_libraries(${EXEC_NAME}
   PRIVATE
     Qt5::Core Qt5::Sql
     ${Boost_LIBRARIES}
-    nmapdef
+    nmapdef dbdef
 )
