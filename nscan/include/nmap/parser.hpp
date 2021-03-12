@@ -1,11 +1,10 @@
 #pragma once
 
-#include "definitions.hpp"
-
 #include <string>
 
 namespace nmap
 {
+class NmapResult;
 
 NmapResult parse(const std::string& data);
 

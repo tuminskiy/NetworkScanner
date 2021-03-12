@@ -1,5 +1,6 @@
 #include "nmap/detail/parser_impl.hpp"
 #include "convert.hpp"
+#include "definitions.hpp"
 
 namespace nmap::detail {
 

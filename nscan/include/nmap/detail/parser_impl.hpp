@@ -1,8 +1,13 @@
 #pragma once
 
-#include "definitions.hpp"
-
 #include <boost/property_tree/ptree.hpp>
+
+namespace nmap
+{
+  class Host;
+  class Address;
+  class Port;
+}
 
 namespace nmap::detail
 {
