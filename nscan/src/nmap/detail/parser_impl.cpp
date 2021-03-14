@@ -2,6 +2,8 @@
 #include "convert.hpp"
 #include "definitions.hpp"
 
+#include <boost/algorithm/string/predicate.hpp>
+
 namespace nmap::detail {
 
 Host parse_host(const boost::property_tree::ptree& xml)
@@ -40,7 +42,12 @@ Port parse_port(const boost::property_tree::ptree& xml)
   port.protocol = nmap::protocol_from_str(xml.get<std::string>("<xmlattr>.protocol"));
   port.portid = xml.get<uint16_t>("<xmlattr>.portid");
   
-  port.status.state = nmap::state_from_str(xml.get<std::string>("state.<xmlattr>.state"));
+  auto state = xml.get<std::string>("state.<xmlattr>.state");
+
+  if (boost::iequals(state, "open")) state = "up";
+  else if (boost::iequals(state, "closed")) state = "down";
+
+  port.status.state = nmap::state_from_str(state);
   port.status.reason = xml.get<std::string>("state.<xmlattr>.reason");
 
   Service service;
