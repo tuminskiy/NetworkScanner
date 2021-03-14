@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package network_scanner;
+
+import "google/protobuf/empty.proto";
+
+service Notifier {
+  rpc CheckScan(google.protobuf.Empty) returns (stream ScanDifference) {}
+}
+
+message ScanDifference {
+  bool hosts_changed = 1;
+  bool ports_changed = 2;
+}
