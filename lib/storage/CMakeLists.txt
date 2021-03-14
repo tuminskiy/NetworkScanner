@@ -16,9 +16,8 @@ set(SRC include/basedb.hpp src/basedb.cpp)
 find_package(Qt5 COMPONENTS Sql REQUIRED)
 
 target_include_directories(${LIB_NAME}
-  PRIVATE
+  PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/lib/nmap/include
 )
 
 target_sources(${LIB_NAME} PRIVATE ${SRC})

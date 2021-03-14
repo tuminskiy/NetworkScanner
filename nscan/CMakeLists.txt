@@ -37,8 +37,6 @@ target_include_directories(${EXEC_NAME}
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${Boost_INCLUDE_DIR}
-    ${CMAKE_SOURCE_DIR}/lib/nmap/include
-    ${CMAKE_SOURCE_DIR}/lib/storage/include
 )
 
 target_sources(${EXEC_NAME} PRIVATE ${SRC})
