@@ -5,10 +5,9 @@ package network_scanner;
 import "google/protobuf/empty.proto";
 
 service Notifier {
-  rpc CheckScan(google.protobuf.Empty) returns (stream ScanDifference) {}
+  rpc scan_process(google.protobuf.Empty) returns (ScanProcessResponse) {}
 }
 
-message ScanDifference {
-  bool hosts_changed = 1;
-  bool ports_changed = 2;
+message ScanProcessResponse {
+  uint32 scanresult_id = 1;
 }
