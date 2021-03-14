@@ -41,8 +41,6 @@ target_include_directories(${EXEC_NAME}
     ${CMAKE_SOURCE_DIR}/lib/storage/include
 )
 
-message(${CMAKE_SOURCE_DIR})
-
 target_sources(${EXEC_NAME} PRIVATE ${SRC})
 
 target_link_libraries(${EXEC_NAME}
