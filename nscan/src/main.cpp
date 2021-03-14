@@ -1,7 +1,8 @@
 #include <QCoreApplication>
 #include <QProcess>
-#include <QString>
-#include <QTimer>
+#include <QCommandLineParser>
+#include <QSettings>
+#include <QSqlError>
 
 #include <iostream>
 
@@ -12,35 +13,60 @@
 #include "storage/database.hpp"
 
 
-bool program_exist(const QString& name, const QStringList& args, int wait_msecs = 30000);
+bool nmap_exist();
+
+storage::DbConfig make_db_config(const QSettings& settings);
+
 
 int main(int argc, char* argv[])
 {
   QCoreApplication app(argc, argv);
+  QCoreApplication::setApplicationName("nscan");
+  QCoreApplication::setApplicationVersion("1.0.0");
 
-  if (!program_exist("nmap", {"--version"}, 100/*msecs*/)) {
-    std::cerr << "nmap not exist\n";
+  QCommandLineParser parser;
+  parser.addHelpOption();
+  parser.addVersionOption();
+  parser.addPositionalArgument("config", "The path to the configuration file.");
+
+  parser.process(app);
+
+  QString path_to_config;
+
+  if (const auto args = parser.positionalArguments(); args.empty()) {
+    std::cerr << "Configuration file path not specified.\n";
+    return 0;
+  } else {
+    path_to_config = args.first();
+  }
+
+  if (!nmap_exist()) {
+    std::cerr << "nmap not exist.\n";
     return 0;
   }
-  
-  storage::DbConfig config;
-  config.type = "QPSQL7";
-  config.host = "127.0.0.1";
-  config.port = 5432;
-  config.username = "worker";
-  config.password = "123";
-  config.db_name = "network_scan";
 
-  storage::Database db(config);
-  db.open();
+  QSettings settings(path_to_config, QSettings::Format::IniFormat);
+  
+  storage::Database db(make_db_config(settings));
+
+  if (!db.open()) {
+    std::cerr << db.last_error().text().toStdString() << "\n";
+    return 0;
+  }
+
+  const auto scan_finish = [&](const std::string& data) {
+    const auto result = nmap::parse(data);
+    db.save_result(result);
+
+    if (db.last_error().type() != QSqlError::NoError) {
+      std::cerr << db.last_error().text().toStdString() << "\n";
+      QCoreApplication::exit();
+    }
+  };
 
   nscan::Scanner scanner;
 
-  QObject::connect(&scanner, &nscan::Scanner::finished,
-    [&](const std::string& data) {
-       db.save_result(nmap::parse(data));
-    }
-  );
+  QObject::connect(&scanner, &nscan::Scanner::finished, scan_finish);
 
   scanner.scan({"-sS", "-oX", "-", "192.168.0.0/24"});
 
@@ -48,13 +74,27 @@ int main(int argc, char* argv[])
 }
 
 
-bool program_exist(const QString& name, const QStringList& args, int wait_msecs)
+bool nmap_exist()
 {
   QProcess programm;
-  programm.start(name, args);
+  programm.start("nmap", {"--version"});
 
-  const bool success = programm.waitForStarted(wait_msecs);
+  const bool success = programm.waitForStarted(100);
   programm.close();
 
   return success;
+}
+
+storage::DbConfig make_db_config(const QSettings& settings)
+{
+  storage::DbConfig config;
+
+  config.type = settings.value("Database/type").toString();
+  config.host = settings.value("Database/host").toString();
+  config.port = settings.value("Database/port").toInt();
+  config.username = settings.value("Database/username").toString();
+  config.password = settings.value("Database/password").toString();
+  config.db_name = settings.value("Database/db_name").toString();
+
+  return config;
 }
