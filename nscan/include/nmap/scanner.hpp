@@ -19,6 +19,7 @@ public:
 
 signals:
   void finished(const std::string& data);
+  void failed();
 
 private slots:
   void nmap_finish(int code, QProcess::ExitStatus status);

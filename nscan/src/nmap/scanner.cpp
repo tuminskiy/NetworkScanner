@@ -26,6 +26,7 @@ void Scanner::nmap_finish(int code, QProcess::ExitStatus status)
   
   if (status == QProcess::ExitStatus::CrashExit) {
     qDebug() << "nmap crashed";
+    emit failed();
     return;
   }
 
