@@ -30,6 +30,8 @@ set(NOTIFIER_SRC include/notifier/notifier.hpp src/notifier/notifier.cpp)
 set(UTIL_SRC
   include/util/exitcode.hpp
   include/util/functions.hpp src/util/functions.cpp
+  include/util/scopeguard.hpp
+  include/util/detail/scopeguard.hpp src/util/detail/scopeguard.cpp
 )
 
 set(SRC
