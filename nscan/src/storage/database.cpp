@@ -12,20 +12,15 @@
 namespace storage
 {
 
-Database::Database(const DbConfig& config) : BaseDb(config) { }
+Database::Database(const DbConfig& config) : BaseDb(config), on_exit_(false) { }
 
 unsigned int Database::save_result(const nmap::NmapResult& result)
-{  
+{
   auto query = detail::query_insert_scanresult(db_, result);
   
-  if (!query.exec()) {
-    qCritical().noquote() << query.lastError().text();
-    QCoreApplication::exit(nscan::ExitCode::DatabaseError);
-  }
+  exec_with_check(query);
 
-  query.first();
-
-  const auto scanresult_id = query.value(0).toUInt();
+  const auto scanresult_id = get_id(query);
 
   for (const auto& host : result.hosts) {
     const auto host_id = save_host(host);
@@ -36,10 +31,7 @@ unsigned int Database::save_result(const nmap::NmapResult& result)
 
     query = detail::query_insert_scanresult_host(db_, helper);
     
-    if (!query.exec()) {
-      qCritical().noquote() << query.lastError().text();
-      QCoreApplication::exit(nscan::ExitCode::DatabaseError);
-    }
+    exec_with_check(query);
   }
 
   return scanresult_id;
@@ -53,14 +45,9 @@ unsigned int Database::save_host(const nmap::Host& host)
 
   auto query = detail::query_insert_host(db_, helper);
   
-  if (!query.exec()) {
-    qCritical().noquote() << query.lastError().text();
-    QCoreApplication::exit(nscan::ExitCode::DatabaseError);
-  }
+  exec_with_check(query);
 
-  query.first();
-
-  const auto host_id = query.value(0).toUInt();
+  const auto host_id = get_id(query);
 
   for (const auto& port : host.ports) {
     const auto port_id = save_port(port);
@@ -71,10 +58,7 @@ unsigned int Database::save_host(const nmap::Host& host)
 
     auto query = detail::query_insert_host_port(db_, helper);
     
-    if (!query.exec()) {
-      qCritical().noquote() << query.lastError().text();
-      QCoreApplication::exit(nscan::ExitCode::DatabaseError);
-    }
+    exec_with_check(query);
   }
 
   return host_id;
@@ -89,42 +73,42 @@ unsigned int Database::save_port(const nmap::Port& port)
 
   auto query = detail::query_insert_port(db_, helper);
 
-  if (!query.exec()) {
-    qCritical().noquote() << query.lastError().text();
-    QCoreApplication::exit(nscan::ExitCode::DatabaseError);
-  }
+  exec_with_check(query);
 
-  query.first();
-
-  return query.value(0).toUInt();
+  return get_id(query);
 }
 
 unsigned int Database::save_service(const nmap::Service& service)
 {
   auto query = detail::query_insert_service(db_, service);
   
-  if (!query.exec()) {
-    qCritical().noquote() << query.lastError().text();
-    QCoreApplication::exit(nscan::ExitCode::DatabaseError);
-  }
+  exec_with_check(query);
 
-  query.first();
-
-  return query.value(0).toUInt();
+  return get_id(query);
 }
 
 unsigned int Database::save_status(const nmap::Status& status)
 {
   auto query = detail::query_insert_status(db_, status);
   
-  if (!query.exec()) {
+  exec_with_check(query);
+
+  return get_id(query);
+}
+
+void Database::exec_with_check(QSqlQuery& query) const
+{
+  if (!query.exec() && !on_exit_) {
     qCritical().noquote() << query.lastError().text();
     QCoreApplication::exit(nscan::ExitCode::DatabaseError);
+    on_exit_ = true;
   }
+}
 
+unsigned int Database::get_id(QSqlQuery& query) const
+{  
   query.first();
-
-  return query.value(0).toUInt();
+  return query.isValid() ? query.value(0).toUInt() : 0;
 }
 
 } // namespace storage
