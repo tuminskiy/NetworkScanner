@@ -10,7 +10,7 @@ namespace nmap
 
 struct Status
 {
-  enum class State { None = 0, Up, Down };
+  enum class State { None = 0, Up, Down, Filtred };
 
   State state;
   std::string reason;
@@ -65,7 +65,8 @@ static const std::unordered_map<Port::Protocol, std::string> protocol_str = {
 static const std::unordered_map<Status::State, std::string> state_str = {
   { Status::State::None, "None" },
   { Status::State::Up, "Up" },
-  { Status::State::Down, "Down" }
+  { Status::State::Down, "Down" },
+  { Status::State::Filtred, "Filtred" }
 };
 
 } // namespace nmap
