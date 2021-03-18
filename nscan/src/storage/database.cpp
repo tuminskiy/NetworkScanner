@@ -1,11 +1,10 @@
 #include "storage/database.hpp"
+#include "storage/detail/query.hpp"
 #include "definitions.hpp"
 #include "convert.hpp"
 #include "util/exitcode.hpp"
 
 #include <QSqlQuery>
-#include <QVariant>
-#include <QDateTime>
 #include <QSqlError>
 #include <QDebug>
 #include <QCoreApplication>
@@ -17,15 +16,7 @@ Database::Database(const DbConfig& config) : BaseDb(config) { }
 
 unsigned int Database::save_result(const nmap::NmapResult& result)
 {  
-  if (!db_.transaction()) {
-    qCritical().noquote() << db_.lastError().text();
-    QCoreApplication::exit(nscan::ExitCode::DatabaseError);
-  }
-
-  QSqlQuery query(db_);
-  query.prepare("SELECT * FROM add_scanresult(:start_tm, :end_tm);");
-  query.bindValue(":start_tm", QDateTime::fromTime_t(result.start_time));
-  query.bindValue(":end_tm", QDateTime::fromTime_t(result.end_time));
+  auto query = detail::query_insert_scanresult(db_, result);
   
   if (!query.exec()) {
     qCritical().noquote() << query.lastError().text();
@@ -39,9 +30,11 @@ unsigned int Database::save_result(const nmap::NmapResult& result)
   for (const auto& host : result.hosts) {
     const auto host_id = save_host(host);
 
-    query.prepare("SELECT add_scanresult_host(:scanresult_id, :host_id);");
-    query.bindValue(":scanresult_id", scanresult_id);
-    query.bindValue(":host_id", host_id);
+    detail::InserScanResultHostHelper helper;
+    helper.scanresult_id = scanresult_id;
+    helper.host_id = host_id;
+
+    query = detail::query_insert_scanresult_host(db_, helper);
     
     if (!query.exec()) {
       qCritical().noquote() << query.lastError().text();
@@ -49,24 +42,16 @@ unsigned int Database::save_result(const nmap::NmapResult& result)
     }
   }
 
-  if (!db_.commit()) {
-    qCritical().noquote() << db_.lastError().text();
-    QCoreApplication::exit(nscan::ExitCode::DatabaseError);
-  }
-
   return scanresult_id;
 }
 
 unsigned int Database::save_host(const nmap::Host& host)
 {
-  const auto status_id = save_status(host.status);
+  detail::InsertHostHelper helper;
+  helper.host = host;
+  helper.status_id = save_status(host.status);
 
-  QSqlQuery query(db_);
-  query.prepare("SELECT * FROM add_host(:status_id, :mac, :address, :vendor);");
-  query.bindValue(":status_id", status_id);
-  query.bindValue(":mac", QString::fromStdString(host.mac));
-  query.bindValue(":address", QString::fromStdString(host.address));
-  query.bindValue(":vendor", QString::fromStdString(host.vendor));
+  auto query = detail::query_insert_host(db_, helper);
   
   if (!query.exec()) {
     qCritical().noquote() << query.lastError().text();
@@ -80,9 +65,11 @@ unsigned int Database::save_host(const nmap::Host& host)
   for (const auto& port : host.ports) {
     const auto port_id = save_port(port);
 
-    query.prepare("SELECT add_host_port(:host_id, :port_id);");
-    query.bindValue(":host_id", host_id);
-    query.bindValue(":port_id", port_id);
+    detail::InserHostPortHelper helper;
+    helper.host_id = host_id;
+    helper.port_id = port_id;
+
+    auto query = detail::query_insert_host_port(db_, helper);
     
     if (!query.exec()) {
       qCritical().noquote() << query.lastError().text();
@@ -95,15 +82,12 @@ unsigned int Database::save_host(const nmap::Host& host)
 
 unsigned int Database::save_port(const nmap::Port& port)
 {
-  const auto status_id = save_status(port.status);
-  const auto service_id = save_service(port.service);
+  detail::InsertPortHelper helper;
+  helper.port = port;
+  helper.status_id = save_status(port.status);
+  helper.service_id = save_service(port.service);
 
-  QSqlQuery query(db_);
-  query.prepare("SELECT * FROM add_port(:portid, :protocol, :service_id, :status_id);");
-  query.bindValue(":portid", port.portid);
-  query.bindValue(":protocol", QString::fromStdString(nmap::to_string(port.protocol)));
-  query.bindValue(":service_id", service_id);
-  query.bindValue(":status_id", status_id);
+  auto query = detail::query_insert_port(db_, helper);
 
   if (!query.exec()) {
     qCritical().noquote() << query.lastError().text();
@@ -117,11 +101,7 @@ unsigned int Database::save_port(const nmap::Port& port)
 
 unsigned int Database::save_service(const nmap::Service& service)
 {
-  QSqlQuery query(db_);
-  query.prepare("SELECT * FROM add_service(:name, :method, :conf);");
-  query.bindValue(":name", QString::fromStdString(service.name));
-  query.bindValue(":method", QString::fromStdString(service.method));
-  query.bindValue(":conf", service.conf);
+  auto query = detail::query_insert_service(db_, service);
   
   if (!query.exec()) {
     qCritical().noquote() << query.lastError().text();
@@ -135,10 +115,7 @@ unsigned int Database::save_service(const nmap::Service& service)
 
 unsigned int Database::save_status(const nmap::Status& status)
 {
-  QSqlQuery query(db_);
-  query.prepare("SELECT * FROM add_status(:state, :reason);");
-  query.bindValue(":state", QString::fromStdString(nmap::to_string(status.state)));
-  query.bindValue(":reason", QString::fromStdString(status.reason));
+  auto query = detail::query_insert_status(db_, status);
   
   if (!query.exec()) {
     qCritical().noquote() << query.lastError().text();

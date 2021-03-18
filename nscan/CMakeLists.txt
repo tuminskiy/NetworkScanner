@@ -20,7 +20,10 @@ set(NMAP_SRC
   include/nmap/scanner.hpp src/nmap/scanner.cpp
 )
 
-set(STORAGE_SRC include/storage/database.hpp src/storage/database.cpp)
+set(STORAGE_SRC
+  include/storage/database.hpp src/storage/database.cpp
+  include/storage/detail/query.hpp src/storage/detail/query.cpp
+)
 
 set(NOTIFIER_SRC include/notifier/notifier.hpp src/notifier/notifier.cpp)
 
