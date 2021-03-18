@@ -1,4 +1,5 @@
 #include "basedb.hpp"
+#include "detail/query.hpp"
 #include "definitions.hpp"
 #include "convert.hpp"
 
@@ -32,9 +33,7 @@ QSqlError BaseDb::last_error() const { return db_.lastError(); }
 
 nmap::NmapResult BaseDb::result_by_id(unsigned int id) const
 {
-  QSqlQuery query(db_);
-  query.prepare("SELECT * FROM scanresult WHERE id=:id;");
-  query.bindValue(":id", id);
+  auto query = detail::query_select_scanresult(db_, id);
   query.exec();
 
   query.first();
@@ -44,8 +43,7 @@ nmap::NmapResult BaseDb::result_by_id(unsigned int id) const
   result.start_time = query.value("start_dt").toDateTime().toTime_t();
   result.end_time = query.value("end_dt").toDateTime().toTime_t();
 
-  query.prepare("SELECT * FROM scanresult_host WHERE scanresult_id=:id;");
-  query.bindValue(":id", id);
+  query = detail::query_select_scanresult_host(db_, id);
   query.exec();
 
   while (query.next()) {
@@ -58,9 +56,7 @@ nmap::NmapResult BaseDb::result_by_id(unsigned int id) const
 
 nmap::Host BaseDb::host_by_id(unsigned int id) const
 {
-  QSqlQuery query(db_);
-  query.prepare("SELECT * FROM host WHERE id=:id;");
-  query.bindValue(":id", id);
+  auto query = detail::query_select_host(db_, id);
   query.exec();
 
   query.first();
@@ -71,8 +67,7 @@ nmap::Host BaseDb::host_by_id(unsigned int id) const
   host.address = query.value("address").toString().toStdString();
   host.vendor = query.value("vendor").toString().toStdString();
 
-  query.prepare("SELECT * FROM host_port WHERE host_id=:id;");
-  query.bindValue(":id", id);
+  query = detail::query_select_host_port(db_, id);
   query.exec();
 
   while (query.next()) {
@@ -85,9 +80,7 @@ nmap::Host BaseDb::host_by_id(unsigned int id) const
 
 nmap::Port BaseDb::port_by_id(unsigned int id) const
 {
-  QSqlQuery query(db_);
-  query.prepare("SELECT * FROM port WHERE id=:id;");
-  query.bindValue(":id", id);
+  auto query = detail::query_select_port(db_, id);
   query.exec();
 
   query.first();
@@ -103,9 +96,7 @@ nmap::Port BaseDb::port_by_id(unsigned int id) const
 
 nmap::Service BaseDb::service_by_id(unsigned int id) const
 {
-  QSqlQuery query(db_);
-  query.prepare("SELECT * FROM service WHERE id=:id;");
-  query.bindValue(":id", id);
+  auto query = detail::query_select_service(db_, id);
   query.exec();
 
   query.first();
@@ -120,9 +111,7 @@ nmap::Service BaseDb::service_by_id(unsigned int id) const
 
 nmap::Status BaseDb::status_by_id(unsigned int id) const 
 {
-  QSqlQuery query(db_);
-  query.prepare("SELECT * FROM status WHERE id=:id;");
-  query.bindValue(":id", id);
+  auto query = detail::query_select_status(db_, id);
   query.exec();
 
   query.first();
@@ -134,4 +123,4 @@ nmap::Status BaseDb::status_by_id(unsigned int id) const
   return status;
 }
 
-} // namespace storage
+} // namespace storage::detail
