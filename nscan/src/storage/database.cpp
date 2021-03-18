@@ -3,6 +3,7 @@
 #include "definitions.hpp"
 #include "convert.hpp"
 #include "util/exitcode.hpp"
+#include "util/scopeguard.hpp"
 
 #include <QSqlQuery>
 #include <QSqlError>
@@ -16,6 +17,9 @@ Database::Database(const DbConfig& config) : BaseDb(config), on_exit_(false) { }
 
 unsigned int Database::save_result(const nmap::NmapResult& result)
 {
+  const nscan::ScopeGuard rollback_guard = [&] { db_.rollback(); };
+  db_.transaction();
+
   auto query = detail::query_insert_scanresult(db_, result);
   
   exec_with_check(query);
@@ -33,6 +37,9 @@ unsigned int Database::save_result(const nmap::NmapResult& result)
     
     exec_with_check(query);
   }
+
+  rollback_guard.commit();
+  db_.commit();
 
   return scanresult_id;
 }
@@ -108,6 +115,7 @@ void Database::exec_with_check(QSqlQuery& query) const
 unsigned int Database::get_id(QSqlQuery& query) const
 {  
   query.first();
+  
   return query.isValid() ? query.value(0).toUInt() : 0;
 }
 
