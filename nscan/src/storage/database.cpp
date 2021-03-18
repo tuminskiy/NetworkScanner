@@ -2,12 +2,9 @@
 #include "definitions.hpp"
 #include "convert.hpp"
 
-#include <sstream>
-#include <iomanip>
-
 #include <QSqlQuery>
 #include <QVariant>
-#include <QSqlError>
+#include <QDateTime>
 
 namespace storage
 {
@@ -15,19 +12,11 @@ namespace storage
 Database::Database(const DbConfig& config) : BaseDb(config) { }
 
 unsigned int Database::save_result(const nmap::NmapResult& result)
-{
-  std::ostringstream start_tm;
-  std::ostringstream end_tm;
-
-  constexpr const char* format = "%Y-%m-%d %H:%M:%S";
-
-  start_tm << std::put_time(result.start_time, format);
-  end_tm << std::put_time(result.end_time, format);
-  
+{  
   QSqlQuery query(db_);
   query.prepare("SELECT * FROM add_scanresult(:start_tm, :end_tm);");
-  query.bindValue(":start_tm", QString::fromStdString(start_tm.str()));
-  query.bindValue(":end_tm", QString::fromStdString(end_tm.str()));
+  query.bindValue(":start_tm", QDateTime::fromTime_t(result.start_time));
+  query.bindValue(":end_tm", QDateTime::fromTime_t(result.end_time));
   query.exec();
 
   query.first();

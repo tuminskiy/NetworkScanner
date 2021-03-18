@@ -2,12 +2,10 @@
 #include "definitions.hpp"
 #include "convert.hpp"
 
-#include <sstream>
-#include <iomanip>
-
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QVariant>
+#include <QDateTime>
 
 namespace storage
 {
@@ -43,13 +41,8 @@ nmap::NmapResult BaseDb::result_by_id(unsigned int id) const
 
   nmap::NmapResult result;
 
-  constexpr const char* format = "%Y-%m-%d %H:%M:%S";
-
-  std::istringstream start_tm(query.value("start_dt").toString().toStdString());
-  std::istringstream end_tm(query.value("end_dt").toString().toStdString());
-
-  start_tm >> std::get_time(result.start_time, format);
-  end_tm >> std::get_time(result.end_time, format);
+  result.start_time = query.value("start_dt").toDateTime().toTime_t();
+  result.end_time = query.value("end_dt").toDateTime().toTime_t();
 
   query.prepare("SELECT * FROM scanresult_host WHERE scanresult_id=:id;");
   query.bindValue(":id", id);
