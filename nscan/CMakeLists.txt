@@ -24,11 +24,17 @@ set(STORAGE_SRC include/storage/database.hpp src/storage/database.cpp)
 
 set(NOTIFIER_SRC include/notifier/notifier.hpp src/notifier/notifier.cpp)
 
+set(UTIL_SRC
+  include/util/exitcode.hpp
+  include/util/functions.hpp src/util/functions.cpp
+)
+
 set(SRC
   src/main.cpp
   ${NMAP_SRC}
   ${STORAGE_SRC}
   ${NOTIFIER_SRC}
+  ${UTIL_SRC}
 )
 
 find_package(Qt5 COMPONENTS Core Sql REQUIRED)
