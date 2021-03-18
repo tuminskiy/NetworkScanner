@@ -8,7 +8,6 @@
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
-#include <QDebug>
 
 namespace storage
 {
@@ -38,7 +37,7 @@ unsigned int Database::save_result(const nmap::NmapResult& result)
   for (const auto& host : result.hosts) {
     const auto host_id = save_host(host);
 
-    query.prepare("add_scanresult_host(:scanresult_id, :host_id);");
+    query.prepare("SELECT add_scanresult_host(:scanresult_id, :host_id);");
     query.bindValue(":scanresult_id", scanresult_id);
     query.bindValue(":host_id", host_id);
     query.exec();
@@ -66,7 +65,7 @@ unsigned int Database::save_host(const nmap::Host& host)
   for (const auto& port : host.ports) {
     const auto port_id = save_port(port);
 
-    query.prepare("add_host_port(:host_id, :port_id);");
+    query.prepare("SELECT add_host_port(:host_id, :port_id);");
     query.bindValue(":host_id", host_id);
     query.bindValue(":port_id", port_id);
     query.exec();
