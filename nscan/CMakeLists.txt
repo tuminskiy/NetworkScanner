@@ -20,14 +20,15 @@ set(NMAP_SRC
   include/nmap/scanner.hpp src/nmap/scanner.cpp
 )
 
-set(STORAGE_SRC
-  include/storage/database.hpp src/storage/database.cpp
-)
+set(STORAGE_SRC include/storage/database.hpp src/storage/database.cpp)
+
+set(NOTIFIER_SRC include/notifier/notifier.hpp src/notifier/notifier.cpp)
 
 set(SRC
   src/main.cpp
   ${NMAP_SRC}
   ${STORAGE_SRC}
+  ${NOTIFIER_SRC}
 )
 
 find_package(Qt5 COMPONENTS Core Sql REQUIRED)
@@ -37,8 +38,6 @@ target_include_directories(${EXEC_NAME}
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${Boost_INCLUDE_DIR}
-    ${CMAKE_SOURCE_DIR}/lib/nmap/include
-    ${CMAKE_SOURCE_DIR}/lib/storage/include
 )
 
 target_sources(${EXEC_NAME} PRIVATE ${SRC})
@@ -47,5 +46,5 @@ target_link_libraries(${EXEC_NAME}
   PRIVATE
     Qt5::Core Qt5::Sql
     ${Boost_LIBRARIES}
-    nmapdef dbdef
+    nmapdef dbdef notifier
 )

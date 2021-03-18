@@ -19,9 +19,10 @@ set(SRC
 find_package(Boost REQUIRED)
 
 target_include_directories(${LIB_NAME}
-  PRIVATE
+  PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${Boost_INCLUDE_DIR}
+  PRIVATE
+    ${Boost_INCLUDE_DIRS}
 )
 
 target_sources(${LIB_NAME} PRIVATE ${SRC})

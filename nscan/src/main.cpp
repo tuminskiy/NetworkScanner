@@ -6,12 +6,9 @@
 
 #include <iostream>
 
-#include "definitions.hpp"
-#include "convert.hpp"
-#include "nmap/scanner.hpp"
-#include "nmap/parser.hpp"
-#include "storage/database.hpp"
+#include "notifier/notifier.hpp"
 
+#include <grpc++/server_builder.h>
 
 bool nmap_exist();
 
@@ -54,21 +51,15 @@ int main(int argc, char* argv[])
     return 0;
   }
 
-  const auto scan_finish = [&](const std::string& data) {
-    const auto result = nmap::parse(data);
-    db.save_result(result);
+  nscan::NotifierService service(std::move(db));
 
-    if (db.last_error().type() != QSqlError::NoError) {
-      std::cerr << db.last_error().text().toStdString() << "\n";
-      QCoreApplication::exit();
-    }
-  };
+  grpc::ServerBuilder builder;
+  builder.AddListeningPort("localhost:25015", grpc::InsecureServerCredentials());
+  builder.RegisterService(&service);
 
-  nscan::Scanner scanner;
+  auto server = builder.BuildAndStart();
 
-  QObject::connect(&scanner, &nscan::Scanner::finished, scan_finish);
-
-  scanner.scan({"-sS", "-oX", "-", "192.168.0.0/24"});
+  service.start_timer();
 
   return app.exec();
 }
