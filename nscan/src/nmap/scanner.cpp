@@ -21,7 +21,7 @@ void Scanner::scan(const QStringList& args)
     return;
   
   nmap_.start("nmap", args);
-  qDebug() << QDateTime::currentDateTime().toString() << "nmap started . . .";
+  qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]") << "nmap started . . .";
 }
 
 void Scanner::nmap_finish(int code, QProcess::ExitStatus status)
@@ -31,12 +31,12 @@ void Scanner::nmap_finish(int code, QProcess::ExitStatus status)
   nmap_.kill();
 
   if (status == QProcess::ExitStatus::CrashExit) {
-    qDebug() << QDateTime::currentDateTime().toString()  << "nmap crashed";
+    qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]") << "nmap crashed";
     emit failed();
     return;
   }
 
-  qDebug() << QDateTime::currentDateTime().toString()  << "nmap finished";
+  qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]") << "nmap finished";
   
   const QByteArray bytes = nmap_.readAllStandardOutput();
 

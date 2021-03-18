@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
   storage::Database db(nscan::make_db_config(settings));
 
   if (!db.open()) {
-    qCritical() << db.last_error().text();
+    qCritical().noquote() << db.last_error().text();
     return nscan::ExitCode::DatabaseError;
   }
 
