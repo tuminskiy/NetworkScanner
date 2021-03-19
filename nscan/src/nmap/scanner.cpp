@@ -1,6 +1,7 @@
 #include "nmap/scanner.hpp"
 
 #include <QDebug>
+#include <QDateTime>
 
 namespace nscan
 {
@@ -16,8 +17,11 @@ Scanner::Scanner(QObject* parent)
 
 void Scanner::scan(const QStringList& args)
 {
+  if (nmap_.state() == QProcess::Running)
+    return;
+  
   nmap_.start("nmap", args);
-  qDebug() << "nmap started . . .";
+  qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]") << "nmap started . . .";
 }
 
 void Scanner::nmap_finish(int code, QProcess::ExitStatus status)
@@ -27,12 +31,12 @@ void Scanner::nmap_finish(int code, QProcess::ExitStatus status)
   nmap_.kill();
 
   if (status == QProcess::ExitStatus::CrashExit) {
-    qDebug() << "nmap crashed";
+    qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]") << "nmap crashed";
     emit failed();
     return;
   }
 
-  qDebug() << "nmap finished";
+  qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]") << "nmap finished";
   
   const QByteArray bytes = nmap_.readAllStandardOutput();
 

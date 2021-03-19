@@ -20,15 +20,26 @@ set(NMAP_SRC
   include/nmap/scanner.hpp src/nmap/scanner.cpp
 )
 
-set(STORAGE_SRC include/storage/database.hpp src/storage/database.cpp)
+set(STORAGE_SRC
+  include/storage/database.hpp src/storage/database.cpp
+  include/storage/detail/query.hpp src/storage/detail/query.cpp
+)
 
 set(NOTIFIER_SRC include/notifier/notifier.hpp src/notifier/notifier.cpp)
+
+set(UTIL_SRC
+  include/util/exitcode.hpp
+  include/util/functions.hpp src/util/functions.cpp
+  include/util/scopeguard.hpp
+  include/util/detail/scopeguard.hpp src/util/detail/scopeguard.cpp
+)
 
 set(SRC
   src/main.cpp
   ${NMAP_SRC}
   ${STORAGE_SRC}
   ${NOTIFIER_SRC}
+  ${UTIL_SRC}
 )
 
 find_package(Qt5 COMPONENTS Core Sql REQUIRED)

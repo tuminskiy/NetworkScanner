@@ -11,7 +11,10 @@ set_target_properties(${LIB_NAME} PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib/release/${LIB_NAME}
 )
 
-set(SRC include/basedb.hpp src/basedb.cpp)
+set(SRC
+  include/basedb.hpp src/basedb.cpp
+  include/detail/query.hpp src/detail/query.cpp
+)
 
 find_package(Qt5 COMPONENTS Sql REQUIRED)
 

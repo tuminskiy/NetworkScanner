@@ -13,12 +13,12 @@ AS $$
 DECLARE
   result INTEGER;
 BEGIN
-  SELECT id INTO result FROM Host_Address
+  SELECT id INTO result FROM Host_Port
     WHERE host_id = host_id_
     AND port_id = port_id_;
 
   IF NOT FOUND THEN
-    INSERT INTO Host_Address(host_id, port_id)
+    INSERT INTO Host_Port(host_id, port_id)
     VALUES (host_id_, port_id_)
     RETURNING id INTO result;
   END IF;

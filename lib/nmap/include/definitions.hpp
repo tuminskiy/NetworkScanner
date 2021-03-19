@@ -50,8 +50,8 @@ using Hosts = std::deque<Host>;
 
 struct NmapResult
 {
-  std::tm* start_time;
-  std::tm* end_time;
+  time_t start_time;
+  time_t end_time;
   Hosts hosts;
 };
 
