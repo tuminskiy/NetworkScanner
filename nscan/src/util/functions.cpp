@@ -1,8 +1,10 @@
 #include "util/functions.hpp"
+#include "util/assert.hpp"
 #include "basedb.hpp"
 
 #include <QProcess>
 #include <QSettings>
+#include <QCommandLineParser>
 
 namespace nscan
 {
@@ -30,6 +32,15 @@ storage::DbConfig make_db_config(const QSettings& settings)
   config.db_name = settings.value("Database/db_name").toString();
 
   return config;
+}
+
+QString get_config(const QCommandLineParser& parser)
+{
+  const auto args = parser.positionalArguments();
+
+  BOOST_ASSERT_MSG(!args.empty(), "Configuration file path not specified.");
+
+  return args.first();
 }
 
 } // namespace nscan
