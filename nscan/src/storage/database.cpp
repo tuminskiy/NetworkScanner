@@ -2,8 +2,8 @@
 #include "storage/detail/query.hpp"
 #include "definitions.hpp"
 #include "convert.hpp"
-#include "util/exitcode.hpp"
 #include "util/scopeguard.hpp"
+#include "util/assert.hpp"
 
 #include <QSqlQuery>
 #include <QSqlError>
@@ -13,7 +13,7 @@
 namespace storage
 {
 
-Database::Database(const DbConfig& config) : BaseDb(config), on_exit_(false) { }
+Database::Database(const DbConfig& config) : BaseDb(config) { }
 
 unsigned int Database::save_result(const nmap::NmapResult& result)
 {
@@ -105,18 +105,16 @@ unsigned int Database::save_status(const nmap::Status& status)
 
 void Database::exec_with_check(QSqlQuery& query) const
 {
-  if (!query.exec() && !on_exit_) {
-    qCritical().noquote() << query.lastError().text();
-    QCoreApplication::exit(nscan::ExitCode::DatabaseError);
-    on_exit_ = true;
-  }
+  BOOST_ASSERT_MSG(query.exec(), query.lastError().text().toStdString().c_str());
 }
 
 unsigned int Database::get_id(QSqlQuery& query) const
 {  
   query.first();
   
-  return query.isValid() ? query.value(0).toUInt() : 0;
+  BOOST_ASSERT_MSG(query.isValid(), "Query result not valid");
+
+  return query.value(0).toUInt();
 }
 
 } // namespace storage
