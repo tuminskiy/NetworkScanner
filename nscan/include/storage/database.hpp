@@ -16,8 +16,6 @@ namespace storage
 
 class Database : public BaseDb
 {
-  mutable bool on_exit_;
-  
 public:
   explicit Database(const DbConfig& config);
 
