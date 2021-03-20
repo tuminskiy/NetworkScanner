@@ -9,7 +9,7 @@ void assertion_failed_msg(char const * expr, char const * msg,
                           char const * function, char const * file, long line)
 {
   qCritical() << "ERROR:" << msg;
-  std::abort();
+  std::exit(0);
 }
 
 } // namespace boost
