@@ -16,6 +16,7 @@ public:
   explicit Scanner(QObject* parent = nullptr);
 
   void scan(const QStringList& args);
+  QProcess::ProcessState state() const;
 
 signals:
   void finished(const std::string& data);

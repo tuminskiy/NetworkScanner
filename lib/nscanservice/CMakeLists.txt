@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-set(LIB_NAME notifier)
+set(LIB_NAME nscanservice)
 add_library(${LIB_NAME} STATIC)
 
 set_target_properties(${LIB_NAME} PROPERTIES
@@ -15,7 +15,7 @@ find_package(Protobuf CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 
-set(PROTO_FILES notifier.proto)
+set(PROTO_FILES nscanservice.proto)
 
 target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 

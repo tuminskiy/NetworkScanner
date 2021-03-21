@@ -15,9 +15,8 @@ set_target_properties(${EXEC_NAME} PROPERTIES
 )
 
 set(NMAP_SRC
-  include/nmap/parser.hpp src/nmap/parser.cpp
-  include/nmap/detail/parser_impl.hpp src/nmap/detail/parser_impl.cpp
   include/nmap/scanner.hpp src/nmap/scanner.cpp
+  include/nmap/nmapresult.hpp src/nmap/nmapresult.cpp
 )
 
 set(STORAGE_SRC
@@ -25,7 +24,7 @@ set(STORAGE_SRC
   include/storage/detail/query.hpp src/storage/detail/query.cpp
 )
 
-set(NOTIFIER_SRC include/notifier/notifier.hpp src/notifier/notifier.cpp)
+set(NSCANSERVICE_SRC include/nscanservice/nscanservice.hpp src/nscanservice/nscanservice.cpp)
 
 set(UTIL_SRC
   include/util/functions.hpp src/util/functions.cpp
@@ -38,7 +37,7 @@ set(SRC
   src/main.cpp
   ${NMAP_SRC}
   ${STORAGE_SRC}
-  ${NOTIFIER_SRC}
+  ${NSCANSERVICE_SRC}
   ${UTIL_SRC}
 )
 
@@ -57,5 +56,5 @@ target_link_libraries(${EXEC_NAME}
   PRIVATE
     Qt5::Core Qt5::Sql
     ${Boost_LIBRARIES}
-    nmapdef dbdef notifier
+    nmapdef dbdef nscanservice
 )

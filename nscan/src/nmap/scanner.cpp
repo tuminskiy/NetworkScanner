@@ -24,6 +24,8 @@ void Scanner::scan(const QStringList& args)
   qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]") << "nmap started . . .";
 }
 
+QProcess::ProcessState Scanner::state() const { return nmap_.state(); }
+
 void Scanner::nmap_finish(int code, QProcess::ExitStatus status)
 {
   Q_UNUSED(code)
