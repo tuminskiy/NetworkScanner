@@ -15,9 +15,8 @@ set_target_properties(${EXEC_NAME} PROPERTIES
 )
 
 set(NMAP_SRC
-  include/nmap/parser.hpp src/nmap/parser.cpp
-  include/nmap/detail/parser_impl.hpp src/nmap/detail/parser_impl.cpp
   include/nmap/scanner.hpp src/nmap/scanner.cpp
+  include/nmap/nmapresult.hpp src/nmap/nmapresult.cpp
 )
 
 set(STORAGE_SRC
@@ -37,9 +36,9 @@ set(UTIL_SRC
 set(SRC
   src/main.cpp
   ${NMAP_SRC}
-  ${STORAGE_SRC}
-  ${NOTIFIER_SRC}
-  ${UTIL_SRC}
+  # ${STORAGE_SRC}
+  # ${NOTIFIER_SRC}
+  # ${UTIL_SRC}
 )
 
 find_package(Qt5 COMPONENTS Core Sql REQUIRED)
@@ -57,5 +56,5 @@ target_link_libraries(${EXEC_NAME}
   PRIVATE
     Qt5::Core Qt5::Sql
     ${Boost_LIBRARIES}
-    nmapdef dbdef notifier
+    nmapdef  notifier
 )
