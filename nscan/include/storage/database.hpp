@@ -2,14 +2,7 @@
 
 #include "basedb.hpp"
 
-namespace nmap
-{
-  class NmapResult;
-  class Host;
-  class Port;
-  class Service;
-  class Status;
-};
+namespace nmap { class Host; };
 
 namespace storage
 {
@@ -19,15 +12,11 @@ class Database : public BaseDb
 public:
   explicit Database(const DbConfig& config);
 
-  unsigned int save_result(const nmap::NmapResult& result);
+  unsigned int save_host(const nmap::Host& host);
+  unsigned int save_asset(unsigned int host_id);
 
 private:
-  unsigned int save_host(const nmap::Host& host);
-  unsigned int save_port(const nmap::Port& port);
-  unsigned int save_service(const nmap::Service& service);
-  unsigned int save_status(const nmap::Status& status);
-
-  void exec_with_check(QSqlQuery& query) const;
+  void exec_with_check(QSqlQuery& query);
   unsigned int get_id(QSqlQuery& query) const;
 };
 

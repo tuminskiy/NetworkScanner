@@ -36,9 +36,9 @@ set(UTIL_SRC
 set(SRC
   src/main.cpp
   ${NMAP_SRC}
-  # ${STORAGE_SRC}
+  ${STORAGE_SRC}
   # ${NOTIFIER_SRC}
-  # ${UTIL_SRC}
+  ${UTIL_SRC}
 )
 
 find_package(Qt5 COMPONENTS Core Sql REQUIRED)
@@ -56,5 +56,5 @@ target_link_libraries(${EXEC_NAME}
   PRIVATE
     Qt5::Core Qt5::Sql
     ${Boost_LIBRARIES}
-    nmapdef  notifier
+    nmapdef dbdef notifier
 )

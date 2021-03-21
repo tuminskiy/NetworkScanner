@@ -3,11 +3,15 @@
 #include <QSettings>
 #include <QSqlError>
 
-#include <grpc++/server_builder.h>
+// #include <grpc++/server_builder.h>
 
-#include "notifier/notifier.hpp"
+// #include "notifier/notifier.hpp"
 #include "util/functions.hpp"
 #include "util/assert.hpp"
+
+#include "nmap/scanner.hpp"
+#include "nmap/nmapresult.hpp"
+#include "storage/database.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -32,15 +36,31 @@ int main(int argc, char* argv[])
 
   BOOST_ASSERT_MSG(db.open(), db.last_error().text().toStdString().c_str());
 
-  nscan::NotifierService service(std::move(db));
+  nscan::Scanner scanner;
+  nscan::NmapResult result;
+  std::vector<nmap::Host> hosts;
 
-  grpc::ServerBuilder builder;
-  builder.AddListeningPort("localhost:25015", grpc::InsecureServerCredentials());
-  builder.RegisterService(&service);
+  QObject::connect(&scanner, &nscan::Scanner::finished,
+    [&](const std::string& data) {
+      result = nscan::read_xml(data);
+      nscan::read_result(result.get_child("nmaprun"), "host", hosts);
+      
+      for (const auto& host : hosts)
+        db.save_host(host);
+    }
+  );
 
-  auto server = builder.BuildAndStart();
+  scanner.scan({"-sP", "-oX", "-", "scanme.nmap.org"});
 
-  service.start_timer();
+  // nscan::NotifierService service(std::move(db));
+
+  // grpc::ServerBuilder builder;
+  // builder.AddListeningPort("localhost:25015", grpc::InsecureServerCredentials());
+  // builder.RegisterService(&service);
+
+  // auto server = builder.BuildAndStart();
+
+  // service.start_timer();
 
   return app.exec();
 }
