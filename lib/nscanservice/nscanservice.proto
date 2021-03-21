@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package network_scanner;
+
+service NscanService {
+  rpc start_scan(StartScanRequest) returns (StartScanResponse) {}
+}
+
+message StartScanRequest {
+  string target = 1;
+}
+
+message StartScanResponse {
+  bool success = 1;
+  repeated uint32 hosts = 2;
+}
