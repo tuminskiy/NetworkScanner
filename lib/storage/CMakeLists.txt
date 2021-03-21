@@ -11,22 +11,12 @@ set_target_properties(${LIB_NAME} PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib/release/${LIB_NAME}
 )
 
-set(SRC
-  include/basedb.hpp src/basedb.cpp
-  include/detail/query.hpp src/detail/query.cpp
-)
+set(SRC include/basedb.hpp src/basedb.cpp)
 
 find_package(Qt5 COMPONENTS Sql REQUIRED)
 
-target_include_directories(${LIB_NAME}
-  PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_sources(${LIB_NAME} PRIVATE ${SRC})
 
-target_link_libraries(${LIB_NAME}
-  PRIVATE
-    Qt5::Sql
-    nmapdef
-)
+target_link_libraries(${LIB_NAME} PRIVATE Qt5::Sql)
