@@ -39,13 +39,8 @@ cmd_create_user = "CREATE USER " + new_user + " with PASSWORD '" + new_pass + "'
 cmd_create_db = "CREATE DATABASE " + new_db + ";"
 cmd_give_grant = "GRANT ALL PRIVILEGES ON DATABASE " + new_db + " TO " + new_user + ";"
 
-cmd_create_status = "sql/status.sql"
-cmd_create_service = "sql/service.sql"
-cmd_create_port = "sql/port.sql"
 cmd_create_host = "sql/host.sql"
-cmd_create_host_port = "sql/host_port.sql"
-cmd_create_scanresult =  "sql/scanresult.sql"
-cmd_create_scanresult_host = "sql/scanresult_host.sql"
+cmd_create_asset = "sql/asset.sql"
 
 
 auth = make_auth(username, host, port)
@@ -57,10 +52,5 @@ exec_sql(auth, cmd_give_grant)
 
 auth = make_auth(new_user, host, port)
 
-exec_file_for_db(auth, new_db, cmd_create_status)
-exec_file_for_db(auth, new_db, cmd_create_service)
-exec_file_for_db(auth, new_db, cmd_create_port)
 exec_file_for_db(auth, new_db, cmd_create_host)
-exec_file_for_db(auth, new_db, cmd_create_host_port)
-exec_file_for_db(auth, new_db, cmd_create_scanresult)
-exec_file_for_db(auth, new_db, cmd_create_scanresult_host)
+exec_file_for_db(auth, new_db, cmd_create_asset)
