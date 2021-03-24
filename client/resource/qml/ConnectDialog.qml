@@ -7,12 +7,17 @@ Window {
   id: root
 
   signal connectClicked
+  
+  readonly property string host: tfHost.text
+  readonly property string port: tfPort.text
 
   width: 400
   height: 170
 
   maximumWidth: 400
   maximumHeight: 170
+
+  flags: Qt.Dialog
 
   ColumnLayout {
     anchors.fill: parent
@@ -28,6 +33,7 @@ Window {
       }
 
       TextField {
+        id: tfHost
         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
 
         placeholderText: "192.168.111.111"
@@ -48,6 +54,7 @@ Window {
       }
 
       TextField {
+        id: tfPort
         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
 
         placeholderText: "25015"
