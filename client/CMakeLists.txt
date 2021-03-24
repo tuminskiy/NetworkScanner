@@ -15,9 +15,15 @@ set_target_properties(${EXEC_NAME} PROPERTIES
   AUTORCC ON
 )
 
+set(NSCANCLIENT_SRC
+  include/nscanclient/nscandef.hpp
+  include/nscanclient/nscanclient.hpp src/nscanclient/nscanclient.cpp
+)
+
 set(SRC
   src/main.cpp
   resource/qml.qrc
+  ${NSCANCLIENT_SRC}
 )
 
 find_package(Qt5 COMPONENTS Qml Quick Sql REQUIRED)
