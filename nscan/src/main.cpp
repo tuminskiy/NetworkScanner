@@ -2,6 +2,7 @@
 #include <QCommandLineParser>
 #include <QSettings>
 #include <QSqlError>
+#include <QDebug>
 
 #include "util/functions.hpp"
 #include "util/assert.hpp"
@@ -47,6 +48,8 @@ int main(int argc, char* argv[])
     builder.RegisterService(&service);
 
     auto server = builder.BuildAndStart();
+
+    qInfo() << "Server started on localhost:25015";
     
     return app.exec();
 
