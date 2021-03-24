@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 
   try
   {
-    nscan::NscanService service(std::move(db));
+    nscan::NscanService service(std::move(db), nscan::make_db_guest_config(settings));
 
     grpc::ServerBuilder builder;
     builder.AddListeningPort("localhost:25015", grpc::InsecureServerCredentials());

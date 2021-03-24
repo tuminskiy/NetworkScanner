@@ -5,16 +5,28 @@
 namespace nscan
 {
 
-NscanService::NscanService(storage::Database&& db)
+NscanService::NscanService(storage::Database&& db, const storage::DbConfig& guest_config)
   : db_(std::move(db))
+  , guest_config_(guest_config)
 {
-  connect(&scanner_, &Scanner::finished,
-          this, &NscanService::scan_finished);
+  QObject::connect(&scanner_, &Scanner::finished,
+                   this, &NscanService::scan_finished);
 
-  connect(&scanner_, &Scanner::finished,
-          this, &NscanService::scan_failed);
+  QObject::connect(&scanner_, &Scanner::finished,
+                   this, &NscanService::scan_failed);
 }
 
+Status NscanService::connect(ServerContext* context, const google::protobuf::Empty*, DbGuestConfig* res)
+{
+  res->set_type(guest_config_.type.toStdString());
+  res->set_host(guest_config_.host.toStdString());
+  res->set_port(guest_config_.port);
+  res->set_username(guest_config_.username.toStdString());
+  res->set_password(guest_config_.password.toStdString());
+  res->set_db_name(guest_config_.db_name.toStdString());
+  
+  return Status::OK;
+}
 
 Status NscanService::start_scan(ServerContext* context, const StartScanRequest* req, StartScanResponse* res)
 {

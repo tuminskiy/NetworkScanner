@@ -19,12 +19,14 @@ using grpc::Status;
 using grpc::ServerContext;
 using grpc::ServerWriter;
 using grpc::ServerCompletionQueue;
+using network_scanner::DbGuestConfig;
 using network_scanner::StartScanRequest;
 using network_scanner::StartScanResponse;
 
 class NscanService final : public QObject, public network_scanner::NscanService::Service
 {
   storage::Database db_;
+  storage::DbConfig guest_config_;
   Scanner scanner_;
   StartScanResponse* res_;
 
@@ -32,7 +34,9 @@ class NscanService final : public QObject, public network_scanner::NscanService:
   std::condition_variable cv_;
 
 public:
-  explicit NscanService(storage::Database&& db);
+  explicit NscanService(storage::Database&& db, const storage::DbConfig& guest_config);
+
+  Status connect(ServerContext* context, const google::protobuf::Empty*, DbGuestConfig* res) override;
 
   Status start_scan(ServerContext* context, const StartScanRequest* req, StartScanResponse* res) override;
 
