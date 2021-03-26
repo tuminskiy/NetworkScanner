@@ -20,8 +20,8 @@ class NscanClient : public QObject
 public:
   explicit NscanClient(QObject* parent = nullptr);
 
-  Q_INVOKABLE void connect(const QString& target);
-  Q_INVOKABLE void start_scan(const QString& target);
+  void connect(const QString& target);
+  void start_scan(const QString& target);
 
 signals:
   void connected(const storage::DbConfig& config);

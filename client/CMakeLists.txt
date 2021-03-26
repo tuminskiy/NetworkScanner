@@ -10,9 +10,15 @@ set_target_properties(${EXEC_NAME} PROPERTIES
 
   RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin/debug/${EXEC_NAME}
   RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin/release/${EXEC_NAME}
+  AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ui
 
+  AUTOUIC ON
   AUTOMOC ON
-  AUTORCC ON
+)
+
+set(GUI_SRC
+  include/gui/window/connectdialog.hpp src/gui/window/connectdialog.cpp
+  include/gui/window/mainwindow.hpp src/gui/window/mainwindow.cpp
 )
 
 set(NSCANCLIENT_SRC
@@ -20,13 +26,19 @@ set(NSCANCLIENT_SRC
   include/nscanclient/nscanclient.hpp src/nscanclient/nscanclient.cpp
 )
 
-set(SRC
-  src/main.cpp
-  resource/qml.qrc
-  ${NSCANCLIENT_SRC}
+set(STORAGE_SRC
+  include/storage/database.hpp src/storage/database.cpp
+  include/storage/detail/query.hpp src/storage/detail/query.cpp
 )
 
-find_package(Qt5 COMPONENTS Qml Quick Sql REQUIRED)
+set(SRC
+  src/main.cpp
+  ${GUI_SRC}
+  ${NSCANCLIENT_SRC}
+  ${STORAGE_SRC}
+)
+
+find_package(Qt5 COMPONENTS Widgets Sql REQUIRED)
 
 target_include_directories(${EXEC_NAME}
   PRIVATE
@@ -37,6 +49,6 @@ target_sources(${EXEC_NAME} PRIVATE ${SRC})
 
 target_link_libraries(${EXEC_NAME}
   PRIVATE
-    Qt5::Qml Qt5::Quick Qt5::Sql
+    Qt5::Widgets Qt5::Sql
     nmapdef dbdef nscanservice
 )

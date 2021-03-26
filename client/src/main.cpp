@@ -1,16 +1,24 @@
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
+#include <QApplication>
 
 #include "nscanclient/nscanclient.hpp"
+#include "gui/window/connectdialog.hpp"
+#include "gui/window/mainwindow.hpp"
+
+#include <memory>
 
 int main(int argc, char** argv)
 {
-  QGuiApplication app(argc, argv);
+  QApplication app(argc, argv);
 
-  qmlRegisterType<swatcher::NscanClient>("swatcher.NscanClient", 1, 0, "NscanClient");
+  auto client = std::make_shared<swatcher::NscanClient>();
 
-  QQmlApplicationEngine engine;
-  engine.load(QUrl{"qrc:/qml/main.qml"});
+  gui::ConnectDialog cdialog(client);
+  gui::MainWindow mwindow(client);
+
+  QObject::connect(&cdialog, &gui::ConnectDialog::connected,
+                   &mwindow, &gui::MainWindow::connected);
+
+  cdialog.open();
 
   return app.exec();
 }
