@@ -21,10 +21,7 @@ set(GUI_SRC
   include/gui/window/mainwindow.hpp src/gui/window/mainwindow.cpp
 )
 
-set(NSCANCLIENT_SRC
-  include/nscanclient/nscandef.hpp
-  include/nscanclient/nscanclient.hpp src/nscanclient/nscanclient.cpp
-)
+set(NSCANCLIENT_SRC include/nscanclient/nscanclient.hpp src/nscanclient/nscanclient.cpp)
 
 set(STORAGE_SRC
   include/storage/database.hpp src/storage/database.cpp

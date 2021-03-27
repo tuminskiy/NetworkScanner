@@ -51,10 +51,8 @@ void NscanService::scan_finished(const std::string& data)
 
   nscan::read_result(nmap_result, "host", hosts);
 
-  for (const auto& host : hosts) {
+  for (const auto& host : hosts)
     const auto host_id = db_.save_host(host);
-    res_->add_hosts(host_id);
-  }
 
   res_->set_success(true);
 

@@ -1,5 +1,4 @@
 #include "nscanclient/nscanclient.hpp"
-#include "nscanclient/nscandef.hpp"
 #include "nscanservice.pb.h"
 #include "basedb.hpp"
 
@@ -46,19 +45,10 @@ void NscanClient::start_scan(const QString& target)
   
   const auto status = stub_->start_scan(&context, req, &res);
 
-  if (status.ok()) {
-    StartScanResponse response;
-    
-    response.success = res.success();
-    response.hosts.reserve(res.hosts().size());
-
-    std::copy(res.hosts().begin(), res.hosts().end(),
-              std::back_inserter(response.hosts));
-
-    emit scan_finished(response);
-  } else {
+  if (status.ok())
+    emit scan_finished(res);
+  else
     emit failed(QString::fromStdString(status.error_code() + ": " + status.error_message()));
-  }
 }
 
 } // namespace swatcher

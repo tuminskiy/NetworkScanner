@@ -9,8 +9,6 @@ namespace storage { class DbConfig; }
 namespace swatcher
 {
 
-class StartScanResponse;
-
 class NscanClient : public QObject
 {
   Q_OBJECT
@@ -25,7 +23,7 @@ public:
 
 signals:
   void connected(const storage::DbConfig& config);
-  void scan_finished(const StartScanResponse& response);
+  void scan_finished(const network_scanner::StartScanResponse& response);
   void failed(const QString& message);
 };
 

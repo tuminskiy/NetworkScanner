@@ -25,5 +25,4 @@ message StartScanRequest {
 
 message StartScanResponse {
   bool success = 1;
-  repeated uint32 hosts = 2;
 }
