@@ -12,7 +12,7 @@ NscanService::NscanService(storage::Database&& db, const storage::DbConfig& gues
   QObject::connect(&scanner_, &Scanner::finished,
                    this, &NscanService::scan_finished);
 
-  QObject::connect(&scanner_, &Scanner::finished,
+  QObject::connect(&scanner_, &Scanner::failed,
                    this, &NscanService::scan_failed);
 }
 
@@ -35,10 +35,10 @@ Status NscanService::start_scan(ServerContext* context, const StartScanRequest* 
 
   res_ = res;
 
+  scanner_.scan({"-sP", "-oX", "-", QString::fromStdString(req->target())});
+
   std::unique_lock ul(mtx_);
   cv_.wait(ul, [&] { return scanner_.state() == QProcess::ProcessState::NotRunning; });
-
-  scanner_.scan({"-sP", "-oX", "-", QString::fromStdString(req->target())});
 
   return Status::OK;
 }
