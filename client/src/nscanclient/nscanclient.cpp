@@ -46,7 +46,7 @@ void NscanClient::start_scan(const QString& target)
   const auto status = stub_->start_scan(&context, req, &res);
 
   if (status.ok())
-    emit scan_finished(res);
+    res.success() ? emit finished() : emit failed("Scan crashed");
   else
     emit failed(QString::fromStdString(status.error_code() + ": " + status.error_message()));
 }

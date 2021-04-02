@@ -1,48 +1,48 @@
 #include "nmap/scanner.hpp"
 
+#include <sstream>
 #include <QDebug>
 #include <QDateTime>
+
+#ifndef __kernel_entry
+#define __kernel_entry
+#endif
+
+#include <boost/process.hpp>
 
 namespace nscan
 {
 
-Scanner::Scanner(QObject* parent)
-  : QObject(parent)
-{
-  nmap_.setProcessChannelMode(QProcess::MergedChannels);
+Scanner::Scanner(QObject* parent) : QObject(parent) { }
 
-  connect(&nmap_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-          this, &Scanner::nmap_finish);
-}
-
-void Scanner::scan(const QStringList& args)
+bool Scanner::scan(const QStringList& args)
 {
-  if (nmap_.state() == QProcess::Running)
-    return;
-  
-  nmap_.start("nmap", args);
+  const auto command = ("nmap " + args.join(' ')).toStdString();
+
+  boost::process::ipstream pipe_stream;
+  boost::process::child nmap(command, boost::process::std_out > pipe_stream);;
+
   qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]") << "nmap started . . .";
-}
-
-QProcess::ProcessState Scanner::state() const { return nmap_.state(); }
-
-void Scanner::nmap_finish(int code, QProcess::ExitStatus status)
-{
-  Q_UNUSED(code)
   
-  nmap_.kill();
+  std::string line;
+  std::ostringstream oss;
 
-  if (status == QProcess::ExitStatus::CrashExit) {
+  while (pipe_stream && std::getline(pipe_stream, line) && !line.empty())
+    oss << line << "\n";
+
+  nmap.wait();
+
+  if (nmap.exit_code() != 0) {
     qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]") << "nmap crashed";
     emit failed();
-    return;
+    return false;
   }
 
   qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]") << "nmap finished";
-  
-  const QByteArray bytes = nmap_.readAllStandardOutput();
 
-  emit finished(bytes.toStdString());
+  emit finished(oss.str());
+
+  return true;
 }
 
 } // namespace nscan

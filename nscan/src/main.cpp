@@ -11,6 +11,8 @@
 
 #include <grpc++/server_builder.h>
 
+Q_DECLARE_METATYPE(std::string)
+
 int main(int argc, char* argv[])
 {
   QCoreApplication app(argc, argv);
@@ -41,6 +43,7 @@ int main(int argc, char* argv[])
 
   try
   {
+    qRegisterMetaType<std::string>();
     nscan::NscanService service(std::move(db), nscan::make_db_guest_config(settings));
 
     grpc::ServerBuilder builder;

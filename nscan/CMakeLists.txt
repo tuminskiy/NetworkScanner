@@ -42,7 +42,7 @@ set(SRC
 )
 
 find_package(Qt5 COMPONENTS Core Sql REQUIRED)
-find_package(Boost REQUIRED)
+find_package(Boost COMPONENTS filesystem REQUIRED)
 
 target_include_directories(${EXEC_NAME}
   PRIVATE

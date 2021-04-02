@@ -2,15 +2,12 @@
 
 #include "nscanservice.pb.h"
 #include "nscanservice.grpc.pb.h"
-
 #include "storage/database.hpp"
 #include "nmap/scanner.hpp"
 
 #include <QObject>
-
 #include <mutex>
 #include <condition_variable>
-
 
 namespace nscan
 {
@@ -28,7 +25,7 @@ class NscanService final : public QObject, public network_scanner::NscanService:
   storage::Database db_;
   storage::DbConfig guest_config_;
   Scanner scanner_;
-  StartScanResponse* res_;
+  bool finished_;
 
   std::mutex mtx_;
   std::condition_variable cv_;
