@@ -23,7 +23,7 @@ public:
 
 signals:
   void connected(const storage::DbConfig& config);
-  void scan_finished(const network_scanner::StartScanResponse& response);
+  void finished();
   void failed(const QString& message);
 };
 

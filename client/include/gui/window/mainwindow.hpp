@@ -5,7 +5,12 @@
 
 #include <memory>
 
-namespace storage { class DbConfig; }
+namespace storage
+{
+  class DbConfig;
+  class HostWithId;
+} // namespace storage
+
 namespace swatcher { class NscanClient; }
 
 namespace gui
@@ -24,6 +29,14 @@ public:
   
 public slots:
   void connected(const storage::DbConfig& config);
+
+private slots:
+  void scan_clicked();
+  void scan_finished();
+  void failed(const QString& message);
+
+private:
+  void fill_list_widget(QListWidget* lw, const std::vector<storage::HostWithId>& data);
 };
 
 } // namespace gui
