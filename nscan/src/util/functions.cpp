@@ -34,6 +34,16 @@ storage::DbConfig make_db_config(const QSettings& settings)
   return config;
 }
 
+storage::DbConfig make_db_guest_config(const QSettings& settings)
+{
+  storage::DbConfig config = make_db_config(settings);
+
+  config.username = settings.value("Database/guest_user").toString();
+  config.password = settings.value("Database/guest_pass").toString();
+
+  return config;
+}
+
 QString get_config(const QCommandLineParser& parser)
 {
   const auto args = parser.positionalArguments();

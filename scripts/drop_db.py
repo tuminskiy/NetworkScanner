@@ -24,9 +24,14 @@ auth = "psql -U " + username + " -h " + host + " -p " + port
 
 new_user = config["DbConfig"]["new_user"]
 new_db = config["DbConfig"]["new_db"]
+guest = config["DbConfig"]["guest_user"]
 
 cmd_drop_db = "DROP DATABASE IF EXISTS " + new_db + ";"
 cmd_drop_user = "DROP USER IF EXISTS " + new_user + ";"
+cmd_drop_owned = "DROP OWNED BY " + guest + ";"
+cmd_drop_guest = "DROP USER IF EXISTS " + guest + ";"
 
 exec_sql(auth, cmd_drop_db)
 exec_sql(auth, cmd_drop_user)
+exec_sql(auth, cmd_drop_owned)
+exec_sql(auth, cmd_drop_guest)

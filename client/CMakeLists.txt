@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-set(EXEC_NAME nscan)
+set(EXEC_NAME scanwatcher)
 
 add_executable(${EXEC_NAME})
 
@@ -10,51 +10,43 @@ set_target_properties(${EXEC_NAME} PROPERTIES
 
   RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin/debug/${EXEC_NAME}
   RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin/release/${EXEC_NAME}
+  AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ui
 
+  AUTOUIC ON
   AUTOMOC ON
 )
 
-set(NMAP_SRC
-  include/nmap/scanner.hpp src/nmap/scanner.cpp
-  include/nmap/nmapresult.hpp src/nmap/nmapresult.cpp
+set(GUI_SRC
+  include/gui/window/connectdialog.hpp src/gui/window/connectdialog.cpp
+  include/gui/window/mainwindow.hpp src/gui/window/mainwindow.cpp
+  include/gui/window/hostwidget.hpp src/gui/window/hostwidget.cpp
 )
+
+set(NSCANCLIENT_SRC include/nscanclient/nscanclient.hpp src/nscanclient/nscanclient.cpp)
 
 set(STORAGE_SRC
   include/storage/database.hpp src/storage/database.cpp
   include/storage/detail/query.hpp src/storage/detail/query.cpp
 )
 
-set(NSCANSERVICE_SRC include/nscanservice/nscanservice.hpp src/nscanservice/nscanservice.cpp)
-
-set(UTIL_SRC
-  include/util/functions.hpp src/util/functions.cpp
-  include/util/scopeguard.hpp
-  include/util/detail/scopeguard.hpp src/util/detail/scopeguard.cpp
-  include/util/assert.hpp src/util/assert.cpp
-)
-
 set(SRC
   src/main.cpp
-  ${NMAP_SRC}
+  ${GUI_SRC}
+  ${NSCANCLIENT_SRC}
   ${STORAGE_SRC}
-  ${NSCANSERVICE_SRC}
-  ${UTIL_SRC}
 )
 
-find_package(Qt5 COMPONENTS Core Sql REQUIRED)
-find_package(Boost COMPONENTS filesystem REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Sql REQUIRED)
 
 target_include_directories(${EXEC_NAME}
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${Boost_INCLUDE_DIR}
 )
 
 target_sources(${EXEC_NAME} PRIVATE ${SRC})
 
 target_link_libraries(${EXEC_NAME}
   PRIVATE
-    Qt5::Core Qt5::Sql
-    ${Boost_LIBRARIES}
+    Qt5::Widgets Qt5::Sql
     nmapdef dbdef nscanservice
 )

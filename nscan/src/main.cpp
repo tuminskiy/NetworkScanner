@@ -2,6 +2,7 @@
 #include <QCommandLineParser>
 #include <QSettings>
 #include <QSqlError>
+#include <QDebug>
 
 #include "util/functions.hpp"
 #include "util/assert.hpp"
@@ -9,6 +10,8 @@
 #include "nscanservice/nscanservice.hpp"
 
 #include <grpc++/server_builder.h>
+
+Q_DECLARE_METATYPE(std::string)
 
 int main(int argc, char* argv[])
 {
@@ -40,13 +43,16 @@ int main(int argc, char* argv[])
 
   try
   {
-    nscan::NscanService service(std::move(db));
+    qRegisterMetaType<std::string>();
+    nscan::NscanService service(std::move(db), nscan::make_db_guest_config(settings));
 
     grpc::ServerBuilder builder;
     builder.AddListeningPort("localhost:25015", grpc::InsecureServerCredentials());
     builder.RegisterService(&service);
 
     auto server = builder.BuildAndStart();
+
+    qInfo() << "Server started on localhost:25015";
     
     return app.exec();
 
