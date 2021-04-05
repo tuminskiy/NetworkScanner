@@ -1,7 +1,10 @@
 #include "nscanservice/nscanservice.hpp"
 #include "definitions.hpp"
 #include "nmap/nmapresult.hpp"
+
 #include <boost/property_tree/xml_parser.hpp>
+#include <QDebug>
+#include <QDateTime>
 
 namespace nscan
 {
@@ -28,8 +31,11 @@ Status NscanService::connect(ServerContext* context, const google::protobuf::Emp
   return Status::OK;
 }
 
-Status NscanService::start_scan(ServerContext* context, const StartScanRequest* req, StartScanResponse* res)
+Status NscanService::start_scan(ServerContext* context, const StartScanRequest* req, SuccessResponse* res)
 {
+  qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]")
+    << "(StartScanRequest) target:" << QString::fromStdString(req->target());
+
   const auto success = scanner_.scan({"-sP", "-oX", "-", QString::fromStdString(req->target())});
 
   res->set_success(success);
@@ -42,6 +48,32 @@ Status NscanService::start_scan(ServerContext* context, const StartScanRequest* 
   return Status::OK;
 }
 
+Status NscanService::save_asset(ServerContext* context, const SaveAssetRequest* req, SuccessResponse* res)
+{
+  qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]")
+    << "(SaveAssetRequest) host_id:" << req->host_id();
+
+  const auto asset_id = db_.save_asset(req->host_id());
+
+  res->set_success(asset_id != 0);
+
+  return Status::OK;
+}
+
+Status NscanService::delete_host(ServerContext* context, const DeleteHostRequest* req, SuccessResponse* res)
+{
+  res->set_success(db_.delete_host(req->host_id()));
+
+  return Status::OK;
+}
+
+Status NscanService::delete_asset(ServerContext* context, const DeleteAssetRequest* req, SuccessResponse* res)
+{
+  res->set_success(db_.delete_asset(req->asset_id()));
+
+  return Status::OK;
+}
+
 void NscanService::scan_finished(const std::string& data)
 {
   const auto nmap_result = nscan::read_xml(data);
@@ -49,7 +81,7 @@ void NscanService::scan_finished(const std::string& data)
   std::vector<nmap::Host> hosts;
 
   nscan::read_result(nmap_result.get_child("nmaprun"), "host", hosts);
-
+  
   for (const auto& host : hosts)
     db_.save_host(host);
 

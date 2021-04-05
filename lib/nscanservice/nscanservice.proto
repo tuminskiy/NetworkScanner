@@ -6,7 +6,13 @@ import "google/protobuf/empty.proto";
 
 service NscanService {
   rpc connect(google.protobuf.Empty) returns (DbGuestConfig) {}
-  rpc start_scan(StartScanRequest) returns (StartScanResponse) {}
+  
+  rpc start_scan(StartScanRequest) returns (SuccessResponse) {}
+  
+  rpc save_asset(SaveAssetRequest) returns (SuccessResponse) {}
+
+  rpc delete_host(DeleteHostRequest) returns (SuccessResponse) {}
+  rpc delete_asset(DeleteAssetRequest) returns (SuccessResponse) {}
 }
 
 message DbGuestConfig
@@ -19,10 +25,22 @@ message DbGuestConfig
   string db_name = 6;
 }
 
+message SuccessResponse {
+  bool success = 1;
+}
+
 message StartScanRequest {
   string target = 1;
 }
 
-message StartScanResponse {
-  bool success = 1;
+message SaveAssetRequest {
+  uint32 host_id = 1;
+}
+
+message DeleteHostRequest {
+  uint32 host_id = 1;
+}
+
+message DeleteAssetRequest {
+  uint32 asset_id = 1;
 }
