@@ -2,7 +2,6 @@
 #include "storage/detail/query.hpp"
 #include "definitions.hpp"
 #include "util/scopeguard.hpp"
-#include "util/assert.hpp"
 
 #include <QSqlQuery>
 #include <QSqlError>
@@ -19,36 +18,52 @@ unsigned int Database::save_host(const nmap::Host& host)
 {
   auto query = detail::query_insert_host(db_, host);
   
-  exec_with_check(query);
-
-  return get_id(query);
+  return exec_with_check(query) ? get_id(query) : 0;
 }
 
 unsigned int Database::save_asset(unsigned int host_id)
 {
   auto query = detail::query_insert_asset(db_, host_id);
 
-  exec_with_check(query);
-
-  return get_id(query);
+  return exec_with_check(query) ? get_id(query) : 0;
 }
 
-void Database::exec_with_check(QSqlQuery& query)
+bool Database::delete_host(unsigned int host_id)
+{
+  auto query = detail::query_delete_host(db_, host_id);
+
+  return exec_with_check(query);
+}
+
+bool Database::delete_asset(unsigned int asset_id)
+{
+  auto query = detail::query_delete_asset(db_, asset_id);
+  
+  return exec_with_check(query);
+}
+
+bool Database::exec_with_check(QSqlQuery& query)
 {
   nscan::ScopeGuard rollback_guard = [&] { db_.rollback(); };
   db_.transaction();
 
-  BOOST_ASSERT_MSG(query.exec(), query.lastError().text().toStdString().c_str());
+  if (!query.exec()) {
+    qCritical().noquote() << "Database error:" << query.lastError().text();
+    return false;
+  }
 
   rollback_guard.commit();
   db_.commit();
+
+  return true;
 }
 
 unsigned int Database::get_id(QSqlQuery& query) const
 {  
-  query.first();
-  
-  BOOST_ASSERT_MSG(query.isValid(), "Query result not valid");
+  if (!query.first() || !query.isValid()) {
+    qCritical().noquote() << "Query result not valid.\nQuery:" << query.lastQuery();
+    return 0;
+  }
 
   return query.value(0).toUInt();
 }

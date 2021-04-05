@@ -29,5 +29,24 @@ QSqlQuery query_insert_asset(const QSqlDatabase& db, unsigned int host_id)
   return query;
 }
 
+QSqlQuery query_delete_host(const QSqlDatabase& db, unsigned int host_id)
+{
+  QSqlQuery query(db);
+  
+  query.prepare("DELETE FROM Host WHERE id=:host_id;");
+  query.bindValue(":host_id", host_id);
+
+  return query;
+}
+
+QSqlQuery query_delete_asset(const QSqlDatabase& db, unsigned int asset_id)
+{
+  QSqlQuery query(db);
+  
+  query.prepare("DELETE FROM Asset WHERE id=:asset_id;");
+  query.bindValue(":asset_id", asset_id);
+
+  return query;
+}
 
 } // namespace storage::detail
