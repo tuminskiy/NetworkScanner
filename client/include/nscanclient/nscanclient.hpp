@@ -21,6 +21,8 @@ public:
   void connect(const QString& target);
   void start_scan(const QString& target);
 
+  bool save_asset(unsigned int host_id);
+
 signals:
   void connected(const storage::DbConfig& config);
   void finished();

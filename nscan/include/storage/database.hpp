@@ -15,8 +15,11 @@ public:
   unsigned int save_host(const nmap::Host& host);
   unsigned int save_asset(unsigned int host_id);
 
+  bool delete_host(unsigned int host_id);
+  bool delete_asset(unsigned int asset_id);
+
 private:
-  void exec_with_check(QSqlQuery& query);
+  bool exec_with_check(QSqlQuery& query);
   unsigned int get_id(QSqlQuery& query) const;
 };
 

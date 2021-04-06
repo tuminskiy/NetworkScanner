@@ -37,12 +37,15 @@
          </widget>
         </item>
         <item>
-         <widget class="QListWidget" name="lwHost">
+         <widget class="gui::HostList" name="lwHost">
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
           <property name="dragEnabled">
            <bool>true</bool>
+          </property>
+          <property name="dragDropMode">
+           <enum>QAbstractItemView::DragOnly</enum>
           </property>
          </widget>
         </item>
@@ -68,12 +71,15 @@
          </widget>
         </item>
         <item>
-         <widget class="QListWidget" name="lwAsset">
+         <widget class="gui::HostList" name="lwAsset">
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
           <property name="dragEnabled">
            <bool>true</bool>
+          </property>
+          <property name="dragDropMode">
+           <enum>QAbstractItemView::DropOnly</enum>
           </property>
          </widget>
         </item>
@@ -133,6 +139,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>gui::HostList</class>
+   <extends>QListWidget</extends>
+   <header>gui/widget/hostlist.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

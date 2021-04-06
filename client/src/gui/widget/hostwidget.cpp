@@ -1,4 +1,4 @@
-#include "gui/window/hostwidget.hpp"
+#include "gui/widget/hostwidget.hpp"
 
 namespace gui
 {

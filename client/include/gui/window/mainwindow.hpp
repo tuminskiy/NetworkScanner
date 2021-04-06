@@ -35,7 +35,12 @@ private slots:
   void scan_finished();
   void failed(const QString& message);
 
+  void add_asset_accepted(QListWidgetItem* item);
+  void add_asset_canceled(QListWidgetItem* item);
+
 private:
+  bool add_asset(const QByteArray& data);
+
   void fill_list_widget(QListWidget* lw, const std::vector<storage::HostWithId>& data);
 };
 

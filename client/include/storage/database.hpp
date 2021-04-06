@@ -14,6 +14,8 @@ struct HostWithId : public nmap::Host
   unsigned int id;
 };
 
+HostWithId host_from_bytes(const QByteArray& data);
+
 class Database : public QObject, public BaseDb
 {
   Q_OBJECT

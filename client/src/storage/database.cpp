@@ -1,6 +1,7 @@
 #include "storage/database.hpp"
 #include "storage/detail/query.hpp"
 
+#include <QDataStream>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QVariant>
@@ -8,6 +9,21 @@
 
 namespace storage
 {
+
+HostWithId host_from_bytes(const QByteArray& data)
+{
+  QDataStream ds(data);
+  storage::HostWithId host;
+
+  QString address, hostname;
+  ds >> host.id >> address >> hostname;
+
+  host.address = address.toStdString();
+  host.hostname = hostname.toStdString();
+
+  return host;
+}
+
 
 Database::Database(const DbConfig& config, QObject* parent) : QObject(parent), BaseDb(config) { }
 

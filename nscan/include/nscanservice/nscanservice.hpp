@@ -17,8 +17,11 @@ using grpc::ServerContext;
 using grpc::ServerWriter;
 using grpc::ServerCompletionQueue;
 using network_scanner::DbGuestConfig;
+using network_scanner::SuccessResponse;
 using network_scanner::StartScanRequest;
-using network_scanner::StartScanResponse;
+using network_scanner::SaveAssetRequest;
+using network_scanner::DeleteHostRequest;
+using network_scanner::DeleteAssetRequest;
 
 class NscanService final : public QObject, public network_scanner::NscanService::Service
 {
@@ -35,7 +38,13 @@ public:
 
   Status connect(ServerContext* context, const google::protobuf::Empty*, DbGuestConfig* res) override;
 
-  Status start_scan(ServerContext* context, const StartScanRequest* req, StartScanResponse* res) override;
+  Status start_scan(ServerContext* context, const StartScanRequest* req, SuccessResponse* res) override;
+
+  Status save_asset(ServerContext* context, const SaveAssetRequest* req, SuccessResponse* res) override;
+
+  Status delete_host(ServerContext* context, const DeleteHostRequest* req, SuccessResponse* res) override;
+
+  Status delete_asset(ServerContext* context, const DeleteAssetRequest* req, SuccessResponse* res) override;
 
 private:
   void scan_finished(const std::string& data);

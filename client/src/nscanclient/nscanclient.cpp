@@ -40,7 +40,7 @@ void NscanClient::start_scan(const QString& target)
   network_scanner::StartScanRequest req;
   req.set_target(target.toStdString());
 
-  network_scanner::StartScanResponse res;
+  network_scanner::SuccessResponse res;
   grpc::ClientContext context;
   
   const auto status = stub_->start_scan(&context, req, &res);
@@ -48,7 +48,20 @@ void NscanClient::start_scan(const QString& target)
   if (status.ok())
     res.success() ? emit finished() : emit failed("Scan crashed");
   else
-    emit failed(QString::fromStdString(status.error_code() + ": " + status.error_message()));
+    emit failed(QString::fromStdString(std::to_string(status.error_code()) + ": " + status.error_message()));
+}
+
+bool NscanClient::save_asset(unsigned int host_id)
+{
+  network_scanner::SaveAssetRequest req;
+  req.set_host_id(host_id);
+
+  network_scanner::SuccessResponse res;
+  grpc::ClientContext context;
+
+  const auto status = stub_->save_asset(&context, req, &res);
+
+  return status.ok() && res.success();
 }
 
 } // namespace swatcher

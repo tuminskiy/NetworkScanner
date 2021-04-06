@@ -2,6 +2,8 @@
 
 #include "ui_connectdialog.h"
 
+#include <memory>
+
 namespace storage { class DbConfig; }
 namespace swatcher { class NscanClient; }
 
