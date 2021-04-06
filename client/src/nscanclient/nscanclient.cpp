@@ -51,4 +51,17 @@ void NscanClient::start_scan(const QString& target)
     emit failed(QString::fromStdString(std::to_string(status.error_code()) + ": " + status.error_message()));
 }
 
+bool NscanClient::save_asset(unsigned int host_id)
+{
+  network_scanner::SaveAssetRequest req;
+  req.set_host_id(host_id);
+
+  network_scanner::SuccessResponse res;
+  grpc::ClientContext context;
+
+  const auto status = stub_->save_asset(&context, req, &res);
+
+  return status.ok() && res.success();
+}
+
 } // namespace swatcher
