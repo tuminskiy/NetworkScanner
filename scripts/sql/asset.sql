@@ -11,7 +11,7 @@ AS $$
 DECLARE
   result INTEGER;
 BEGIN
-  SELECT id INTO result FROM Asset
+  SELECT 0 INTO result FROM Asset
     WHERE host_id = host_id_;
 
   IF NOT FOUND THEN
