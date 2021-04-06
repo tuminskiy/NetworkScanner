@@ -19,7 +19,10 @@ set_target_properties(${EXEC_NAME} PROPERTIES
 set(GUI_SRC
   include/gui/window/connectdialog.hpp src/gui/window/connectdialog.cpp
   include/gui/window/mainwindow.hpp src/gui/window/mainwindow.cpp
-  include/gui/window/hostwidget.hpp src/gui/window/hostwidget.cpp
+
+  include/gui/widget/hostwidget.hpp src/gui/widget/hostwidget.cpp
+  include/gui/widget/dndlistwidget.hpp src/gui/widget/dndlistwidget.cpp
+  include/gui/widget/hostlist.hpp src/gui/widget/hostlist.cpp
 )
 
 set(NSCANCLIENT_SRC include/nscanclient/nscanclient.hpp src/nscanclient/nscanclient.cpp)
