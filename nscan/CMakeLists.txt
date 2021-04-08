@@ -26,12 +26,7 @@ set(STORAGE_SRC
 
 set(NSCANSERVICE_SRC include/nscanservice/nscanservice.hpp src/nscanservice/nscanservice.cpp)
 
-set(UTIL_SRC
-  include/util/functions.hpp src/util/functions.cpp
-  include/util/scopeguard.hpp
-  include/util/detail/scopeguard.hpp src/util/detail/scopeguard.cpp
-  include/util/assert.hpp src/util/assert.cpp
-)
+set(UTIL_SRC include/util/functions.hpp src/util/functions.cpp)
 
 set(SRC
   src/main.cpp

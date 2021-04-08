@@ -1,5 +1,4 @@
 #include "util/functions.hpp"
-#include "util/assert.hpp"
 #include "basedb.hpp"
 
 #include <QProcess>
@@ -48,7 +47,8 @@ QString get_config(const QCommandLineParser& parser)
 {
   const auto args = parser.positionalArguments();
 
-  BOOST_ASSERT_MSG(!args.empty(), "Configuration file path not specified.");
+  if (args.empty())
+    throw std::runtime_error("Configuration file path not specified.");
 
   return args.first();
 }
