@@ -36,12 +36,20 @@ void MainWindow::connected(const storage::DbConfig& config)
     return;
   }
 
+  connect(db_.get(), &storage::Database::failed,
+          this, &MainWindow::failed);
+
   fill_list_widget(ui_.lwHost, db_->hosts());
   fill_list_widget(ui_.lwAsset, db_->assets());
 
   auto cdialog = qobject_cast<QDialog*>(sender());
   cdialog->close();
   show();
+}
+
+void MainWindow::failed(const QString& message)
+{
+  QMessageBox::critical(this, "Error", message);
 }
 
 void MainWindow::scan_clicked()
@@ -57,7 +65,7 @@ void MainWindow::scan_clicked()
   const auto res = client_->start_scan(target, &ok);
 
   if (!ok) {
-    show_client_error();
+    failed(QString::fromStdString(client_->last_error()));
     return;
   }
 
@@ -84,11 +92,6 @@ void MainWindow::add_asset_canceled(QListWidgetItem* /*item*/)
   QMessageBox::critical(this, "Error", "The addition of a host to the asset list has been canceled.");
 }
 
-void MainWindow::show_client_error()
-{
-  QMessageBox::critical(this, "Error", QString::fromStdString(client_->last_error()));
-}
-
 bool MainWindow::add_asset(const QByteArray& data)
 {
   const auto host = storage::host_from_bytes(data);
@@ -97,7 +100,7 @@ bool MainWindow::add_asset(const QByteArray& data)
   const auto res = client_->save_asset(host.id, &ok);
 
   if (!ok) {
-    show_client_error();
+    failed(QString::fromStdString(client_->last_error()));
     return false;
   }
 

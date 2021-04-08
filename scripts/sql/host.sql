@@ -10,7 +10,7 @@ AS $$
 DECLARE
   result INTEGER;
 BEGIN
-  SELECT id INTO result FROM Host
+  SELECT 0 INTO result FROM Host
     WHERE address = address_
     AND hostname = hostname_;
     
