@@ -26,11 +26,14 @@ public:
   std::vector<HostWithId> hosts() const;
   std::vector<HostWithId> assets() const;
 
-signals:
-  void failed(const QString& message) const;
+  std::vector<HostWithId> hosts(const std::vector<unsigned int>& ids) const;
+
+  HostWithId asset(unsigned int asset_id) const;
 
 private:
-  std::vector<HostWithId> hosts_or_assets(QSqlQuery& query) const;
+  std::vector<HostWithId> hosts(QSqlQuery& query) const;
+  
+  HostWithId host(QSqlQuery& query) const;
 };
 
 
