@@ -49,16 +49,20 @@ HostWithId Database::asset(unsigned int asset_id) const
 {
   auto query = detail::query_select_asset(db_, asset_id);
 
-  if (!query.exec() || !query.first())
+  if (!query.exec() || !query.first()) {
+    emit failed(query.lastError().text());
     return {};
+  }
 
   return host(query);
 }
 
 std::vector<HostWithId> Database::hosts(QSqlQuery& query) const 
 {
-  if (!query.exec())
+  if (!query.exec()) {
+    emit failed(query.lastError().text());
     return {};
+  }
 
   std::vector<HostWithId> result;
   result.reserve(query.size());

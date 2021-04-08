@@ -30,6 +30,9 @@ public:
 
   HostWithId asset(unsigned int asset_id) const;
 
+signals:
+  void failed(const QString& message) const;
+
 private:
   std::vector<HostWithId> hosts(QSqlQuery& query) const;
   
