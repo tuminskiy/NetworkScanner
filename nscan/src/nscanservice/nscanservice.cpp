@@ -1,6 +1,7 @@
 #include "nscanservice/nscanservice.hpp"
 #include "definitions.hpp"
 #include "nmap/nmapresult.hpp"
+#include "nmap/scanner.hpp"
 
 #include <boost/property_tree/xml_parser.hpp>
 #include <QDebug>
@@ -9,15 +10,10 @@
 namespace nscan
 {
 
-NscanService::NscanService(storage::Database&& db, const storage::DbConfig& guest_config)
-  : db_(std::move(db))
+NscanService::NscanService(std::shared_ptr<storage::Database> db, const storage::DbConfig& guest_config)
+  : db_(db)
   , guest_config_(guest_config)
-  , scanner_()
-  , finished_(false)
-{
-  QObject::connect(&scanner_, &Scanner::finished,
-                   this, &NscanService::scan_finished);
-}
+{ }
 
 Status NscanService::connect(ServerContext* context, const google::protobuf::Empty*, DbGuestConfig* res)
 {
@@ -31,62 +27,59 @@ Status NscanService::connect(ServerContext* context, const google::protobuf::Emp
   return Status::OK;
 }
 
-Status NscanService::start_scan(ServerContext* context, const StartScanRequest* req, SuccessResponse* res)
+Status NscanService::start_scan(ServerContext* context, const StartScanRequest* req, StartScanResponse* res)
 {
   qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]")
     << "(StartScanRequest) target:" << QString::fromStdString(req->target());
 
-  const auto success = scanner_.scan({"-sP", "-oX", "-", QString::fromStdString(req->target())});
+  const auto nmap_result = nscan::scan({"-sP", "-oX", "-", QString::fromStdString(req->target())});
 
-  res->set_success(success);
+  if (nmap_result.empty()) {
+    res->set_success(false);
+    return Status::OK;
+  }
 
-  std::unique_lock ul(mtx_);
-  cv_.wait(ul, [&] { return finished_; });
+  res->set_success(true);
 
-  finished_ = false;
+  std::vector<nmap::Host> hosts;
+  nscan::read_result(nmap_result.get_child("nmaprun"), "host", hosts);
+
+  for (const auto& host : hosts) {
+    const auto host_id = db_->save_host(host);
+    res->add_host_id(host_id);
+  }
 
   return Status::OK;
 }
 
-Status NscanService::save_asset(ServerContext* context, const SaveAssetRequest* req, SuccessResponse* res)
+Status NscanService::save_asset(ServerContext* context, const SaveAssetRequest* req, SaveAssetResponse* res)
 {
-  qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]")
-    << "(SaveAssetRequest) host_id:" << req->host_id();
+  const auto host_id = req->host_id();
 
-  const auto asset_id = db_.save_asset(req->host_id());
+  qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]")
+    << "(SaveAssetRequest) host_id:" << host_id;
+
+  const auto asset_id = db_->save_asset(host_id);
 
   res->set_success(asset_id != 0);
+  res->set_asset_id(asset_id);
 
   return Status::OK;
 }
 
-Status NscanService::delete_host(ServerContext* context, const DeleteHostRequest* req, SuccessResponse* res)
+Status NscanService::delete_host(ServerContext* context, const DeleteHostRequest* req, DeleteHostResponse* res)
 {
-  res->set_success(db_.delete_host(req->host_id()));
+  res->set_success(db_->delete_host(req->host_id()));
 
   return Status::OK;
 }
 
-Status NscanService::delete_asset(ServerContext* context, const DeleteAssetRequest* req, SuccessResponse* res)
+Status NscanService::delete_asset(ServerContext* context, const DeleteAssetRequest* req, DeleteAssetResponse* res)
 {
-  res->set_success(db_.delete_asset(req->asset_id()));
+  res->set_success(db_->delete_asset(req->asset_id()));
 
   return Status::OK;
 }
 
-void NscanService::scan_finished(const std::string& data)
-{
-  const auto nmap_result = nscan::read_xml(data);
-  
-  std::vector<nmap::Host> hosts;
-
-  nscan::read_result(nmap_result.get_child("nmaprun"), "host", hosts);
-  
-  for (const auto& host : hosts)
-    db_.save_host(host);
-
-  finished_ = true;
-  cv_.notify_one();
-}
 
 } // namespace nscan
