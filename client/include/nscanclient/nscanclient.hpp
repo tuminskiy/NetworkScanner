@@ -2,31 +2,29 @@
 
 #include "nscanservice.grpc.pb.h"
 
-#include <QObject>
+#include <QString>
 
 namespace storage { class DbConfig; }
 
 namespace swatcher
 {
 
-class NscanClient : public QObject
+class NscanClient
 {
-  Q_OBJECT
-
   std::unique_ptr<network_scanner::NscanService::Stub> stub_;
+  std::string last_error_;
 
 public:
-  explicit NscanClient(QObject* parent = nullptr);
+  network_scanner::DbGuestConfig connect(const QString& target, bool* ok = nullptr);
 
-  void connect(const QString& target);
-  void start_scan(const QString& target);
+  network_scanner::StartScanResponse start_scan(const QString& target, bool* ok = nullptr);
 
-  bool save_asset(unsigned int host_id);
+  network_scanner::SaveAssetResponse save_asset(unsigned int host_id, bool* ok = nullptr);
 
-signals:
-  void connected(const storage::DbConfig& config);
-  void finished();
-  void failed(const QString& message);
+  std::string last_error() const;
+
+private:
+  void check_status(const grpc::Status& status, bool* ok);
 };
 
 } // namespace swatcher

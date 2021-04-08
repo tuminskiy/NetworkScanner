@@ -8,6 +8,18 @@ namespace gui
 
 HostList::HostList(QWidget* parent) : DndListWidget(parent) { }
 
+void HostList::add_host(const storage::HostWithId& host)
+{
+  auto whost = new HostWidget(this);
+  whost->set_host(host);
+
+  auto item = new QListWidgetItem(this);
+  item->setSizeHint(whost->sizeHint());
+
+  addItem(item);
+  setItemWidget(item, whost);
+}
+
 QByteArray HostList::bytes_from_widget(const QWidget* w) const
 {
   const auto host = static_cast<const HostWidget*>(w)->host();

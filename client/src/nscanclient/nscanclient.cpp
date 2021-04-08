@@ -7,9 +7,7 @@
 namespace swatcher
 {
 
-NscanClient::NscanClient(QObject* parent) : QObject(parent) { }
-
-void NscanClient::connect(const QString& target)
+network_scanner::DbGuestConfig NscanClient::connect(const QString& target, bool* ok)
 {
   stub_ = network_scanner::NscanService::NewStub(
     grpc::CreateChannel(target.toStdString(), grpc::InsecureChannelCredentials())
@@ -20,48 +18,50 @@ void NscanClient::connect(const QString& target)
 
   const auto status = stub_->connect(&context, google::protobuf::Empty{}, &res);
 
-  if (status.ok()) {
-    storage::DbConfig config;
-    config.type = QString::fromStdString(res.type());
-    config.host = QString::fromStdString(res.host());
-    config.port = res.port();
-    config.username = QString::fromStdString(res.username());
-    config.password = QString::fromStdString(res.password());
-    config.db_name = QString::fromStdString(res.db_name());
-
-    emit connected(config);
-  } else {
-    emit failed("Failed connect to " + target);
-  }
+  check_status(status, ok);
+    
+  return res;
 }
 
-void NscanClient::start_scan(const QString& target)
+network_scanner::StartScanResponse NscanClient::start_scan(const QString& target, bool* ok)
 {
   network_scanner::StartScanRequest req;
   req.set_target(target.toStdString());
 
-  network_scanner::SuccessResponse res;
+  network_scanner::StartScanResponse res;
   grpc::ClientContext context;
   
   const auto status = stub_->start_scan(&context, req, &res);
 
-  if (status.ok())
-    res.success() ? emit finished() : emit failed("Scan crashed");
-  else
-    emit failed(QString::fromStdString(std::to_string(status.error_code()) + ": " + status.error_message()));
+  check_status(status, ok);
+
+  return res;
 }
 
-bool NscanClient::save_asset(unsigned int host_id)
+network_scanner::SaveAssetResponse NscanClient::save_asset(unsigned int host_id, bool* ok)
 {
   network_scanner::SaveAssetRequest req;
   req.set_host_id(host_id);
 
-  network_scanner::SuccessResponse res;
+  network_scanner::SaveAssetResponse res;
   grpc::ClientContext context;
 
   const auto status = stub_->save_asset(&context, req, &res);
 
-  return status.ok() && res.success();
+  check_status(status, ok);
+
+  return res;
+}
+
+std::string NscanClient::last_error() const { return last_error_; }
+
+void NscanClient::check_status(const grpc::Status& status, bool* ok)
+{
+  if (ok)
+    *ok = status.ok();
+
+  if (!status.ok())
+    last_error_ = status.error_message();
 }
 
 } // namespace swatcher

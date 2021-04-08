@@ -17,6 +17,8 @@ public:
   template <class AcceptDropFunc>
   void set_accept_drop(AcceptDropFunc func) { accept_drop_ = func; }
 
+  void add_host(const storage::HostWithId& host);
+
 protected:
   QByteArray bytes_from_widget(const QWidget* w) const override;
 

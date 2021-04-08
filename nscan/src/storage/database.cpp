@@ -1,12 +1,11 @@
 #include "storage/database.hpp"
 #include "storage/detail/query.hpp"
 #include "definitions.hpp"
-#include "util/scopeguard.hpp"
 
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>
-#include <QCoreApplication>
+#include <QScopeGuard>
 
 namespace storage
 {
@@ -44,7 +43,8 @@ bool Database::delete_asset(unsigned int asset_id)
 
 bool Database::exec_with_check(QSqlQuery& query)
 {
-  nscan::ScopeGuard rollback_guard = [&] { db_.rollback(); };
+  QScopeGuard rollback_guard([&] { db_.rollback(); });
+  
   db_.transaction();
 
   if (!query.exec()) {
@@ -52,7 +52,7 @@ bool Database::exec_with_check(QSqlQuery& query)
     return false;
   }
 
-  rollback_guard.commit();
+  rollback_guard.dismiss();
   db_.commit();
 
   return true;

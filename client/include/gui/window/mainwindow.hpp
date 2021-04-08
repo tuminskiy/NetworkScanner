@@ -32,16 +32,16 @@ public slots:
 
 private slots:
   void scan_clicked();
-  void scan_finished();
-  void failed(const QString& message);
 
   void add_asset_accepted(QListWidgetItem* item);
   void add_asset_canceled(QListWidgetItem* item);
 
 private:
+  void show_client_error();
+
   bool add_asset(const QByteArray& data);
 
-  void fill_list_widget(QListWidget* lw, const std::vector<storage::HostWithId>& data);
+  void fill_list_widget(HostList* hl, const std::vector<storage::HostWithId>& data);
 };
 
 } // namespace gui

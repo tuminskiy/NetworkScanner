@@ -25,7 +25,6 @@ signals:
 
 private slots:
   void connect_clicked();
-  void failed(const QString& message);
 };
 
 } // namespace gui

@@ -13,9 +13,7 @@
 namespace nscan
 {
 
-Scanner::Scanner(QObject* parent) : QObject(parent) { }
-
-bool Scanner::scan(const QStringList& args)
+NmapResult scan(const QStringList& args)
 {
   const auto command = ("nmap " + args.join(' ')).toStdString();
 
@@ -34,15 +32,12 @@ bool Scanner::scan(const QStringList& args)
 
   if (nmap.exit_code() != 0) {
     qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]") << "nmap crashed";
-    emit failed();
-    return false;
+    return {};
   }
 
   qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]") << "nmap finished";
-
-  emit finished(oss.str());
-
-  return true;
+  
+  return read_xml(oss.str());
 }
 
 } // namespace nscan
