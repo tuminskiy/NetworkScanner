@@ -45,8 +45,8 @@ Status NscanService::start_scan(ServerContext* context, const StartScanRequest* 
   nscan::read_result(nmap_result.get_child("nmaprun"), "host", hosts);
 
   for (const auto& host : hosts) {
-    const auto host_id = db_->save_host(host);
-    res->add_host_id(host_id);
+    if (const auto host_id = db_->save_host(host); host_id != 0)
+      res->add_host_id(host_id);
   }
 
   return Status::OK;
