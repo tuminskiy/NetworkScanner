@@ -2,7 +2,11 @@ cmake_minimum_required(VERSION 3.15)
 
 set(EXEC_NAME scanwatcher)
 
-add_executable(${EXEC_NAME})
+if (WIN32)
+  set(EXEC_FLAGS WIN32)
+endif()
+
+add_executable(${EXEC_NAME} ${EXEC_FLAGS})
 
 set_target_properties(${EXEC_NAME} PROPERTIES
   CXX_STANDARD 17
