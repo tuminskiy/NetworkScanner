@@ -53,6 +53,36 @@ network_scanner::SaveAssetResponse NscanClient::save_asset(unsigned int host_id,
   return res;
 }
 
+network_scanner::DeleteHostResponse NscanClient::delete_host(unsigned int host_id, bool* ok)
+{
+  network_scanner::DeleteHostRequest req;
+  req.set_host_id(host_id);
+
+  network_scanner::DeleteHostResponse res;
+  grpc::ClientContext context;
+
+  const auto status = stub_->delete_host(&context, req, &res);
+
+  check_status(status, ok);
+
+  return res;
+}
+
+network_scanner::DeleteAssetResponse NscanClient::delete_asset(unsigned int asset_id, bool* ok)
+{
+  network_scanner::DeleteAssetRequest req;
+  req.set_asset_id(asset_id);
+
+  network_scanner::DeleteAssetResponse res;
+  grpc::ClientContext context;
+
+  const auto status = stub_->delete_asset(&context, req, &res);
+
+  check_status(status, ok);
+
+  return res;
+}
+
 std::string NscanClient::last_error() const { return last_error_; }
 
 void NscanClient::check_status(const grpc::Status& status, bool* ok)

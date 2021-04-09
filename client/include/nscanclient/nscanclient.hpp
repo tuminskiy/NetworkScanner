@@ -21,6 +21,10 @@ public:
 
   network_scanner::SaveAssetResponse save_asset(unsigned int host_id, bool* ok = nullptr);
 
+  network_scanner::DeleteHostResponse delete_host(unsigned int host_id, bool* ok = nullptr);
+
+  network_scanner::DeleteAssetResponse delete_asset(unsigned int asset_id, bool* ok = nullptr);
+
   std::string last_error() const;
 
 private:

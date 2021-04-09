@@ -38,6 +38,9 @@
         </item>
         <item>
          <widget class="gui::HostList" name="lwHost">
+          <property name="contextMenuPolicy">
+           <enum>Qt::CustomContextMenu</enum>
+          </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
@@ -72,6 +75,9 @@
         </item>
         <item>
          <widget class="gui::HostList" name="lwAsset">
+          <property name="contextMenuPolicy">
+           <enum>Qt::CustomContextMenu</enum>
+          </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
