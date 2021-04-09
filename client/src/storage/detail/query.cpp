@@ -21,7 +21,7 @@ QSqlQuery query_select_assets(const QSqlDatabase& db)
 {
   QSqlQuery query(db);
 
-  query.prepare("SELECT Host.* FROM Asset "
+  query.prepare("SELECT Asset.id, Host.address, Host.hostname FROM Asset "
                 "LEFT JOIN Host ON Host.id = Asset.host_id;");
 
   return query;
@@ -46,7 +46,7 @@ QSqlQuery query_select_asset(const QSqlDatabase& db, unsigned int asset_id)
 {
   QSqlQuery query(db);
 
-  query.prepare("SELECT Host.* FROM Asset "
+  query.prepare("SELECT Asset.id, Host.address, Host.hostname FROM Asset "
                 "LEFT JOIN Host ON Host.id = Asset.host_id "
                 "WHERE Asset.id = :asset_id;");
   query.bindValue(":asset_id", asset_id);
