@@ -34,8 +34,12 @@ private slots:
   void failed(const QString& message);
   void scan_clicked();
 
-  void add_asset_accepted(QListWidgetItem* item);
   void add_asset_canceled(QListWidgetItem* item);
+
+  void show_context_menu(const QPoint& point);
+
+  void delete_host();
+  void delete_asset();
 
 private:
   bool add_asset(const QByteArray& data);

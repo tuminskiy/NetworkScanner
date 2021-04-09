@@ -69,14 +69,24 @@ Status NscanService::save_asset(ServerContext* context, const SaveAssetRequest* 
 
 Status NscanService::delete_host(ServerContext* context, const DeleteHostRequest* req, DeleteHostResponse* res)
 {
-  res->set_success(db_->delete_host(req->host_id()));
+  const auto host_id = req->host_id();
+
+  qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]")
+    << "(DeleteHostRequest) host_id:" << host_id;
+
+  res->set_success(db_->delete_host(host_id));
 
   return Status::OK;
 }
 
 Status NscanService::delete_asset(ServerContext* context, const DeleteAssetRequest* req, DeleteAssetResponse* res)
 {
-  res->set_success(db_->delete_asset(req->asset_id()));
+  const auto asset_id = req->asset_id();
+
+  qInfo().noquote() << QDateTime::currentDateTime().toString("[dd.MM.yyyy hh:mm:ss]")
+    << "(DeleteAssetRequest) asset_id:" << asset_id;
+
+  res->set_success(db_->delete_asset(asset_id));
 
   return Status::OK;
 }
