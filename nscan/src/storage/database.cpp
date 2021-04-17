@@ -43,8 +43,8 @@ bool Database::delete_asset(unsigned int asset_id)
 
 bool Database::exec_with_check(QSqlQuery& query)
 {
-  QScopeGuard rollback_guard([&] { db_.rollback(); });
-  
+  auto rollback_guard = qScopeGuard([&] { db_.rollback(); });
+    
   db_.transaction();
 
   if (!query.exec()) {
