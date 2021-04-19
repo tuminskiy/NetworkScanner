@@ -41,6 +41,9 @@ std::vector<HostWithId> Database::assets() const
 
 std::vector<HostWithId> Database::hosts(const std::vector<unsigned int>& ids) const
 {
+  if (ids.empty())
+    return {};
+  
   auto query = detail::query_select_hosts(db_, ids);
   return hosts(query);
 }

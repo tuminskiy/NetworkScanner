@@ -29,15 +29,16 @@ QSqlQuery query_select_assets(const QSqlDatabase& db)
 
 QSqlQuery query_select_hosts(const QSqlDatabase& db, const std::vector<unsigned int>& ids)
 {
-  QStringList str_ids;
-  std::transform(ids.begin(), ids.end(), std::back_inserter(str_ids),
-    [](unsigned int id) { return QString::number(id); }
-  );
-  
+  const QVector<QString> placeholders(ids.size(), "?") ;
+  const auto query_text = QString{"SELECT * FROM Host WHERE id IN (%1);"}
+                          .arg(QStringList::fromVector(placeholders).join(","));
+
   QSqlQuery query(db);
   
-  query.prepare("SELECT * FROM Host WHERE id IN (:ids);");
-  query.bindValue(":ids", str_ids.join(','));
+  query.prepare(query_text);
+  
+  for (const auto id : ids)
+    query.addBindValue(id);
 
   return query;
 }
