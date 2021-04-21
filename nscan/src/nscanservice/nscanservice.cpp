@@ -6,7 +6,6 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <QDebug>
 #include <QDateTime>
-#include <future>
 
 namespace nscan
 {
@@ -45,18 +44,9 @@ Status NscanService::start_scan(ServerContext* context, const StartScanRequest* 
   std::vector<nmap::Host> hosts;
   nscan::read_result(nmap_result.get_child("nmaprun"), "host", hosts);
 
-  std::vector<std::future<unsigned int>> future_ids;
-  future_ids.reserve(hosts.size());
-
   for (const auto& host : hosts) {
-    // const auto future_id = std::async(std::launch::async, &storage::Database::save_host, db_.get(), host);
-    // future_ids.push_back(std::move(future_id));
-    future_ids.emplace_back(std::async(std::launch::async, &storage::Database::save_host, db_.get(), host));
-  }
-
-  for (auto& future_id : future_ids) {
-    if (const auto id = future_id.get(); id != 0)
-      res->add_host_id(id);
+    if (const auto host_id = db_->save_host(host); host_id != 0)
+      res->add_host_id(host_id);
   }
 
   return Status::OK;
